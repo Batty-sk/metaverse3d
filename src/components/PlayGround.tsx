@@ -10,6 +10,7 @@ type canvasSizeProp = {
 
 const PlayGround = () => {
   const box = useRef<any>();
+  const playerRef= useRef<any>()
 const [canvassize, updateCanvasSize] = useState<canvasSizeProp>({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -52,8 +53,8 @@ const [canvassize, updateCanvasSize] = useState<canvasSizeProp>({
       className=""
       style={{ width: canvassize.width, height: `${canvassize.height}px` }}
     >
-      <CustomPerspectiveCamera />
-      <Player />
+      <CustomPerspectiveCamera playerRef={playerRef} />
+      <Player playerRef={playerRef}/>
     </Canvas>
   );
 };

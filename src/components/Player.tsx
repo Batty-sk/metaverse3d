@@ -1,44 +1,38 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
-const Player = () => {
-  const playerRef = useRef<any>();
+type PlayerProps={
+playerRef:any
+}
+const Player = ({playerRef}:PlayerProps) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log("key pressed !", e.key);
       switch (e.key) {
-        case "ArrowUp":
+        case 'ArrowUp':
           playerRef.current.position.z -= 0.1;
           break;
-        case "ArrowDown":
+        case 'ArrowDown':
           playerRef.current.position.z += 0.1;
           break;
-        case "ArrowLeft":
+        case 'ArrowLeft':
           playerRef.current.position.x -= 0.1;
           break;
-        case "ArrowRight":
+        case 'ArrowRight':
           playerRef.current.position.x += 0.1;
           break;
       }
-
-      console.log(playerRef.current);
     };
 
-    const handleKeyUp = (e: KeyboardEvent) => {
-      console.log("key Up!", e.key);
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("keyup", handleKeyUp);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("keyup", handleKeyUp);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
   return (
-    <mesh position={[0, 0, 1]} ref={playerRef} scale={[0.5,0.5,0.5]} >
+    <mesh position={[0, 0, 1]} ref={playerRef} scale={[0.5, 0.5, 0.5]}>
       <boxGeometry />
-      <meshBasicMaterial color={"white"} />
+      <meshBasicMaterial color={'white'} />
     </mesh>
   );
 };
