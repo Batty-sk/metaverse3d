@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 
-type PlayerProps={
+type playerProps={
 playerRef:any
 }
-const Player = ({playerRef}:PlayerProps) => {
+const Player = ({playerRef}:playerProps) => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -30,9 +30,9 @@ const Player = ({playerRef}:PlayerProps) => {
   }, []);
 
   return (
-    <mesh position={[0, 0, 1]} ref={playerRef} scale={[0.5, 0.5, 0.5]}>
-      <boxGeometry />
-      <meshBasicMaterial color={'white'} />
+    <mesh position={[0, 0, 1]} ref={playerRef} scale={[0.2, 0.4, 0.2]}>
+      <sphereGeometry />
+      <meshBasicMaterial   color={'white'} />
     </mesh>
   );
 };

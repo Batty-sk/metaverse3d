@@ -53,8 +53,16 @@ const [canvassize, updateCanvasSize] = useState<canvasSizeProp>({
       className=""
       style={{ width: canvassize.width, height: `${canvassize.height}px` }}
     >
-      <CustomPerspectiveCamera playerRef={playerRef} />
-      <Player playerRef={playerRef}/>
+      <axesHelper />
+      <gridHelper />
+       <CustomPerspectiveCamera playerRef={playerRef} />
+{/*       <ambientLight/>
+ */}      <Player playerRef={playerRef}/>
+
+        <mesh rotation={[-Math.PI / 2,0,0]} position={[0,-0.5,0]} >
+            <planeGeometry args={[10,20]}/>
+            <meshBasicMaterial color={'orange'} side={2}/>
+        </mesh>
     </Canvas>
   );
 };
