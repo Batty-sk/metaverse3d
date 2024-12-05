@@ -32,7 +32,7 @@ const Player = ({playerRef}:playerProps) => {
   return (
     <mesh position={[0, 0, 1]} ref={playerRef} scale={[0.2, 0.4, 0.2]}>
       <sphereGeometry />
-      <meshBasicMaterial   color={'white'} />
+      <meshStandardMaterial   color={'white'} />
     </mesh>
   );
 };

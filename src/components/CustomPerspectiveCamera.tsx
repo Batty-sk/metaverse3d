@@ -16,7 +16,7 @@ const CustomPerspectiveCamera = ({ playerRef }: { playerRef: React.RefObject<any
       const x = (e.clientX / innerWidth) * 2 - 1; 
       const y = -(e.clientY / innerHeight) * 2 + 1;
 
-      cameraRef.current.rotation.y = x * 0.6; // Horizontal rotation
+      cameraRef.current.rotation.y = -x * 0.6; // Horizontal rotation
       cameraRef.current.rotation.x = y * 0.5; // Vertical rotation
     };
 
@@ -41,7 +41,7 @@ const CustomPerspectiveCamera = ({ playerRef }: { playerRef: React.RefObject<any
     return () => clearInterval(interval);
   }, [playerRef]);
 
-  return <perspectiveCamera  ref={cameraRef} position={[0, 0, 5]} rotation={[0,0,0]}  />;
+  return <perspectiveCamera  ref={cameraRef} position={[0, 1, 5]} rotation={[0,0,0]}  />;
 };
 
 export default CustomPerspectiveCamera;
