@@ -16,7 +16,7 @@ const CustomPerspectiveCamera = ({ playerRef }: { playerRef: React.RefObject<any
       const x = (e.clientX / innerWidth) * 2 - 1; 
       const y = -(e.clientY / innerHeight) * 2 + 1;
 
-      cameraRef.current.rotation.y = -x * 0.6; // Horizontal rotation
+      cameraRef.current.rotation.y = -x * 1.8; // Horizontal rotation
       cameraRef.current.rotation.x = y * 0.5; // Vertical rotation
     };
 
@@ -24,7 +24,7 @@ const CustomPerspectiveCamera = ({ playerRef }: { playerRef: React.RefObject<any
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-    };
+    };  
   }, []);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const CustomPerspectiveCamera = ({ playerRef }: { playerRef: React.RefObject<any
       if (cameraRef.current && playerRef.current) {
         const playerPosition = playerRef.current.position;
         cameraRef.current.position.x = playerPosition.x;
-        cameraRef.current.position.z = playerPosition.z + 3; // Adjust distance behind the player
+        cameraRef.current.position.z = playerPosition.z + 2; // Adjust distance behind the player
       }
     };
 

@@ -1,67 +1,111 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useEffect,
+  useRef,
+  useState,
+  ReactNode,
+} from "react";
+import Peer from "peerjs";
 import { io, Socket } from "socket.io-client";
 
-
-type Message={
-    from:string,
-    content:string
-}
+type Message = {
+  from: string;
+  content: string;
+};
 
 type Players = {
   socketId: string;
-  distance: number;
+  x: number;
+  y: number;
+  z: number;
 };
 
-type socketContextProps<P,M> = {
+type socketContextProps<P, M> = {
+  socket: Socket | null;
   socketId: string;
   noOfPlayers: number;
   players: P[];
-  
-  messages:M[]
+  fetchCurrentUsersInTheLobby: () => void;
+  messages: M[];
 };
 
-const SocketContext = createContext<socketContextProps<Players,Message>>({ socketId: "",noOfPlayers:0,players:[],messages:[]});
+export const SocketContext = createContext<
+  socketContextProps<Players, Message>
+>({
+  socket: null,
+  socketId: "",
+  noOfPlayers: 0,
+  players: [],
+  messages: [],
+  fetchCurrentUsersInTheLobby: () => "",
+});
 
+type socketContextWrapperProps = {
+  children: ReactNode;
+};
 
-export const SocketContextWrapper = (children:React.ReactNode)=>{
-    const [socket,updateSocket] = useState<Socket|null>(null)
+export const SocketContextWrapper = ({
+  children,
+}: socketContextWrapperProps) => {
+  const [socket, updateSocket] = useState<Socket | null>(null);
+
+  const [users] = useState(); //it will store all the users socketids.. and
+
+  const peers=useRef<{socketId:Peer}>() 
+  const myPeer = useRef<Peer>()
+
+  useEffect(() => {
+    console.log("sendiing the sockets request to the socket  io server ..... ");
+    updateSocket(io("http://localhost:8080")); // for the testing purpose...
+  
+  }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.emit("fetchPlayers", () => {
+        console.log("players fetched ...");
+      });
+
+      if(socket.id)
+      myPeer.current = new Peer(socket.id) //create a Peer with socketId as its unique identifier
+
+      // will create a offer regarding the current specification my
+      // device supports. but we need to create an offer everytime for each socket/user.
+
+      console.log("testing the Onmessage event ... ");
+      socket.emit("onMessage", "message123 provided by the client");
+
+      // here we have to register all the sockets listners...
+
+      socket?.on("messageRequest", handleMessageRequest); // for handling the message request or we can say the message
+      // sent by the friend..  this event will recieve that message.
+
     
-    useEffect(()=>{
-      updateSocket(io('http://localhost:8080')) // for the testing purpose...
-    },[])
-
-    useEffect(()=>{
-        if(socket)
-        {
-          socket.emit('fetchPlayers',()=>{
-            console.log('players fetched ...')
-          })
-
-        }
-
-        socket?.on("friendRequest",handleFriendRequest) // for handling the friend request sent by some random dude/girl
-
-        socket?.on("messageRequest",handleMessageRequest) // for handling the message request or we can say the message
-        // sent by the friend..  this event will recieve that message.
-
-        return()=>{
-          socket?.off("friendRequest",handleFriendRequest)
-          socket?.off("messageRequest",handleMessageRequest)
-        }
-
-    },[socket])
-    const handleFriendRequest = ()=>{
 
     }
-    const handleMessageRequest=()=>{
+    return () => {
+      socket?.off("messageRequest", handleMessageRequest);
+    };
+  }, [socket]);
+    
+  
+ 
 
-    }
-
-    return(
-      <SocketContext.Provider value={{socketId:'',noOfPlayers:0,players:[],messages:[]}}>
-        </SocketContext.Provider> 
-    )
-}
-
+  const handleMessageRequest = () => {};
+  return (
+    <SocketContext.Provider
+      value={{
+        socket: socket,
+        socketId: "",
+        noOfPlayers: 0,
+        players: [],
+        messages: [],
+        fetchCurrentUsersInTheLobby: /* fetchCurrentUsersInTheLobby */ ()=>0,
+      }}
+    >
+      {children}
+    </SocketContext.Provider>
+  );
+};
 
 //createContext
