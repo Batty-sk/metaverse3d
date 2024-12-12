@@ -5,7 +5,8 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import Peer from "peerjs";
+import Peer, { MediaConnection } from "peerjs";
+import { DataConnection } from "peerjs";
 import { io, Socket } from "socket.io-client";
 
 type Message = {
@@ -51,15 +52,25 @@ export const SocketContextWrapper = ({
   children,
 }: socketContextWrapperProps) => {
   const [socket, updateSocket] = useState<Socket | null>(null);
-
+  const localStream = useRef<MediaStream>();
   const [users] = useState(); //it will store all the users socketids.. and
 
-  const peers = useRef<{ socketId: Peer }>();
+  const peers = useRef<Map<string, DataConnection>>();
   const myPeer = useRef<Peer>();
 
   useEffect(() => {
     console.log("sendiing the sockets request to the socket  io server ..... ");
     updateSocket(io("http://localhost:8080")); // for the testing purpose...
+
+    (async () => {
+      try {
+        localStream.current = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+      } catch (e) {
+        console.log("userResponse ");
+      }
+    })();
   }, []);
 
   useEffect(() => {
@@ -80,14 +91,13 @@ export const SocketContextWrapper = ({
             socket.emit("registerMe", { peerID: id });
           });
           myPeer.current.addListener("connection", (connection) => {
-
-            console.log('connection request coming from',connection.peer)
+            console.log("connection request coming from", connection.peer);
             connection.on("open", () => {
               console.log("Connection opened with peer", connection.peer);
+              if (peers.current) peers.current.set(connection.peer, connection);
               connection.send("Hi, I'm your new friend!");
             });
-  
-  
+
             connection.on("data", (data) => {
               console.log("Received data from peer:", data); // Logs the data received from the peer
             });
@@ -100,8 +110,19 @@ export const SocketContextWrapper = ({
               "device which is connected with has the connection",
               connection
             );
-            console.log('sending the data to the connection')
+            console.log("sending the data to the connection");
           });
+
+          myPeer.current.on("call", (call) => {
+            console.log("Incoming media call from", call.peer);
+            if (localStream.current) {
+              call.answer(localStream.current); // Send the local audio stream
+              call.on("stream", (remoteStream) => {
+                console.log("Received remote audio stream from", call.peer);
+                handleRemoteStream(remoteStream);
+              }); 
+            }
+          })
         }
 
         socket.on("someone-joins", handleSomeoneJoins);
@@ -126,6 +147,16 @@ export const SocketContextWrapper = ({
   type peerJoinsProp = {
     peerID: string;
   };
+
+  const handleRemoteStream = (remoteStream: MediaStream) => {
+    const audio = new Audio();
+    audio.srcObject = remoteStream;
+    console.log("stream coming up i thinkkk ??")
+    audio
+      .play()
+      .catch((err) => console.error("Error playing remote audio:", err));
+  };
+
   const handleSomeoneJoins = (peerID: string) => {
     console.log("peer joins with peerId ", peerID);
     const connectionToSomeone = myPeer.current?.connect(peerID);
@@ -142,6 +173,25 @@ export const SocketContextWrapper = ({
       connectionToSomeone.on("close", () => {
         console.log("Connection closed with peer", peerID);
       });
+
+      let call: MediaConnection | undefined;
+      if (myPeer.current && localStream.current)
+        call = myPeer.current.call(peerID, localStream.current);
+
+      if (call) {
+        call.on("stream", (remoteStream) => {
+          console.log("Received remote stream from", peerID);
+          handleRemoteStream(remoteStream);
+        });
+
+        call.on("close", () => {
+          console.log("Media call closed with", peerID);
+          peers.current?.delete(peerID);
+        });
+
+        // Store the peer connection
+        if (peers.current) peers.current.set(peerID, connectionToSomeone);
+      }
     }
   };
 
