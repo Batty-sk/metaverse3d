@@ -55,7 +55,8 @@ export const SocketContextWrapper = ({
   const localStream = useRef<MediaStream>();
   const [users] = useState(); //it will store all the users socketids.. and
 
-  const peers = useRef<Map<string, DataConnection>>();
+  const peers = useRef<Map<string,DataConnection>>(new Map());
+  const peersMedia = useRef<Map<string,HTMLAudioElement>>(new Map())
   const myPeer = useRef<Peer>();
 
   useEffect(() => {
@@ -83,6 +84,8 @@ export const SocketContextWrapper = ({
         console.log("Socket connected, id:", socket.id);
         if (socket.id) {
           myPeer.current = new Peer(socket.id); //  Create a Peer with socketId as its unique identifier
+          // here we need to send an error to the user if its peerconcetion got rejected .
+
           myPeer.current?.addListener("open", (id) => {
             console.log(
               "Connection has been opened! of my peer sending my availability to otherss..",
@@ -90,28 +93,7 @@ export const SocketContextWrapper = ({
             );
             socket.emit("registerMe", { peerID: id });
           });
-          myPeer.current.addListener("connection", (connection) => {
-            console.log("connection request coming from", connection.peer);
-            connection.on("open", () => {
-              console.log("Connection opened with peer", connection.peer);
-              if (peers.current) peers.current.set(connection.peer, connection);
-              connection.send("Hi, I'm your new friend!");
-            });
-
-            connection.on("data", (data) => {
-              console.log("Received data from peer:", data); // Logs the data received from the peer
-            });
-            // Optionally handle when the connection is closed
-            connection.on("close", () => {
-              console.log("Connection closed with peer", connection.peer);
-            });
-
-            console.log(
-              "device which is connected with has the connection",
-              connection
-            );
-            console.log("sending the data to the connection");
-          });
+          myPeer.current.addListener("connection", handleConnection);
 
           myPeer.current.on("call", (call) => {
             console.log("Incoming media call from", call.peer);
@@ -119,10 +101,13 @@ export const SocketContextWrapper = ({
               call.answer(localStream.current); // Send the local audio stream
               call.on("stream", (remoteStream) => {
                 console.log("Received remote audio stream from", call.peer);
-                handleRemoteStream(remoteStream);
-              }); 
-            }
-          })
+                handleRemoteStream(remoteStream,call.peer);
+              });
+              call.on("close", () => {
+                console.log("Media call closed with", call.peer);
+                peersMedia.current?.delete(call.peer);
+              })            }
+          });
         }
 
         socket.on("someone-joins", handleSomeoneJoins);
@@ -141,20 +126,50 @@ export const SocketContextWrapper = ({
     return () => {
       socket?.off("messageRequest", handleMessageRequest);
       socket?.off("someone-joins", handleSomeoneJoins);
+      myPeer.current?.off("connection",handleConnection);
     };
   }, [socket]);
 
   type peerJoinsProp = {
     peerID: string;
   };
+  const handleConnection = (connection: DataConnection) => {
+    console.log("connection request coming from", connection.peer);
+    connection.on("open", () => {
+      console.log("Connection opened with peer", connection.peer);
+      if (peers.current) peers.current.set(connection.peer,connection);
+      connection.send("Hi, I'm your new friend!");
+    });
 
-  const handleRemoteStream = (remoteStream: MediaStream) => {
+    connection.on("data", (data) => {
+      console.log("Received data from peer:", data);
+    });
+    connection.on("close", () => {
+      console.log("Connection closed with peer", connection.peer);
+    });
+
+    console.log(
+      "device which is connected with has the connection",
+      connection
+    );
+    console.log("sending the data to the connection");
+  };
+
+  const handleRemoteStream = (remoteStream: MediaStream,peerId:string) => {
+
+    if(!remoteStream){
+      return;
+    }
     const audio = new Audio();
+    peersMedia.current.set(peerId,audio)
     audio.srcObject = remoteStream;
-    console.log("stream coming up i thinkkk ??")
+    
+    console.log("stream coming up i thinkkk ??",audio,remoteStream);
     audio
       .play()
       .catch((err) => console.error("Error playing remote audio:", err));
+
+    console.log('peermedia of the peer ',peerId,peersMedia)
   };
 
   const handleSomeoneJoins = (peerID: string) => {
@@ -181,12 +196,16 @@ export const SocketContextWrapper = ({
       if (call) {
         call.on("stream", (remoteStream) => {
           console.log("Received remote stream from", peerID);
-          handleRemoteStream(remoteStream);
+          handleRemoteStream(remoteStream,peerID);
+          setTimeout(() => {
+              console.log('timeout has been executed....')
+              mutePlayer(peerID)
+          }, 5000);
         });
-
+ 
         call.on("close", () => {
           console.log("Media call closed with", peerID);
-          peers.current?.delete(peerID);
+          peersMedia.current?.delete(peerID);
         });
 
         // Store the peer connection
@@ -194,7 +213,12 @@ export const SocketContextWrapper = ({
       }
     }
   };
-
+  const mutePlayer = (peerId:string)=>{
+      let peerMediaStream = peersMedia.current.get(peerId)
+      if(peerMediaStream)
+      peerMediaStream.muted = true
+     
+  }
   const handleMessageRequest = () => {};
   return (
     <SocketContext.Provider
