@@ -2,9 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
 import { calculateDistance } from "../utils";
+import { Mesh } from "three";
 
 type playerProps = {
-  playerRef: any;
+  playerRef:any,
 };
 
 
@@ -33,7 +34,6 @@ const MyPlayer = ({ playerRef }: playerProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       console.log("player position", playerRef.current);
-
       if (
         playerRef.current.position.x <= -2.3 &&
         playerRef.current.position.x >= -4 &&
@@ -62,7 +62,7 @@ const MyPlayer = ({ playerRef }: playerProps) => {
           playerRef.current.position.x += 0.1;
           break;
       }
-      socket?.emit("send-coordinates",{x:playerRef.current.position.x,y:playerRef.current.position.y})
+      socket?.emit("send-coordinates",{x:playerRef.current.position.x,y:playerRef.current.position.y,z:playerRef.current.position.z})
     };
 
     document.addEventListener("keydown", handleKeyDown);

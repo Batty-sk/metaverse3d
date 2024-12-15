@@ -26,6 +26,7 @@ type socketContextProps<P, M> = {
   socketId: string;
   noOfPlayers: number;
   players: P[];
+  someoneJoinsOrLeave:[boolean, string] | undefined
   fetchCurrentUsersInTheLobby: () => void;
   messages: M[];
 };
@@ -38,6 +39,7 @@ export const SocketContext = createContext<
   noOfPlayers: 0,
   players: [],
   messages: [],
+  someoneJoinsOrLeave:undefined,
   fetchCurrentUsersInTheLobby: () => "",
 });
 
@@ -53,8 +55,7 @@ export const SocketContextWrapper = ({
 }: socketContextWrapperProps) => {
   const [socket, updateSocket] = useState<Socket | null>(null);
   const localStream = useRef<MediaStream>();
-  const [users] = useState(); //it will store all the users socketids.. and
-
+  const [someoneJoinsOrLeave,setSomeOneJoinsOrLeave] = useState<[boolean,string]|undefined>()
   const peers = useRef<Map<string,DataConnection>>(new Map());
   const peersMedia = useRef<Map<string,HTMLAudioElement>>(new Map())
   const myPeer = useRef<Peer>();
@@ -109,24 +110,19 @@ export const SocketContextWrapper = ({
               })            }
           });
         }
-        socket.on("someone-coordinates",handleSomeOneCoordinates)
         socket.on("someone-joins", handleSomeoneJoins);
         socket?.on("messageRequest", handleMessageRequest);
       });
 
     }
     return () => {
-      socket?.off("someone-coordinates",handleSomeOneCoordinates)
       socket?.off("messageRequest", handleMessageRequest);
       socket?.off("someone-joins", handleSomeoneJoins);
       myPeer.current?.off("connection",handleConnection);
     };
   }, [socket]);
 
-  const handleSomeOneCoordinates = ()=>{
 
-    
-  }
   const handleConnection = (connection: DataConnection) => {
     console.log("connection request coming from", connection.peer);
     connection.on("open", () => {
@@ -173,6 +169,7 @@ export const SocketContextWrapper = ({
       connectionToSomeone.on("open", () => {
         console.log("Connection established with peer ", peerID);
         // You can now start sending data or setting up media streams
+        setSomeOneJoinsOrLeave([true,peerID])
       });
 
       connectionToSomeone.on("data", (data) => {
@@ -182,6 +179,8 @@ export const SocketContextWrapper = ({
       connectionToSomeone.on("close", () => {
         console.log("Connection closed with peer", peerID);
         connectionToSomeone.off("open");
+        setSomeOneJoinsOrLeave([false,peerID])
+
       });
 
 
@@ -200,7 +199,7 @@ export const SocketContextWrapper = ({
           console.log("Media call closed with", peerID);
           peersMedia.current?.delete(peerID);
         });
-
+      
         // Store the peer connection
         if (peers.current) peers.current.set(peerID, connectionToSomeone);
       }
@@ -221,6 +220,7 @@ export const SocketContextWrapper = ({
         noOfPlayers: 0,
         players: [],
         messages: [],
+        someoneJoinsOrLeave,
         fetchCurrentUsersInTheLobby: /* fetchCurrentUsersInTheLobby */ () => 0,
       }}
     >
