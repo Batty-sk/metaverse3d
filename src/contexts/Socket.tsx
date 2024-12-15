@@ -75,7 +75,7 @@ export const SocketContextWrapper = ({
   }, []);
 
   useEffect(() => {
-    if (socket) {
+    if (socket) { 
       socket.emit("fetchPlayers", () => {
         console.log("players fetched ...");
       });
@@ -83,7 +83,7 @@ export const SocketContextWrapper = ({
       socket.on("connect", () => {
         console.log("Socket connected, id:", socket.id);
         if (socket.id) {
-          myPeer.current = new Peer(socket.id); //  Create a Peer with socketId as its unique identifier
+          myPeer.current = new Peer(socket.id); // Create a Peer with socketId as its unique identifier
           // here we need to send an error to the user if its peerconcetion got rejected .
 
           myPeer.current?.addListener("open", (id) => {
@@ -109,30 +109,24 @@ export const SocketContextWrapper = ({
               })            }
           });
         }
-
+        socket.on("someone-coordinates",handleSomeOneCoordinates)
         socket.on("someone-joins", handleSomeoneJoins);
+        socket?.on("messageRequest", handleMessageRequest);
       });
-      // will create a offer regarding the current specification my
-      // device supports. but we need to create an offer everytime for each socket/user.
 
-      console.log("testing the Onmessage event ... ");
-      socket.emit("onMessage", "message123 provided by the client");
-
-      // here we have to register all the sockets listners...
-
-      socket?.on("messageRequest", handleMessageRequest); // for handling the message request or we can say the message
-      // sent by the friend..  this event will recieve that message.
     }
     return () => {
+      socket?.off("someone-coordinates",handleSomeOneCoordinates)
       socket?.off("messageRequest", handleMessageRequest);
       socket?.off("someone-joins", handleSomeoneJoins);
       myPeer.current?.off("connection",handleConnection);
     };
   }, [socket]);
 
-  type peerJoinsProp = {
-    peerID: string;
-  };
+  const handleSomeOneCoordinates = ()=>{
+
+    
+  }
   const handleConnection = (connection: DataConnection) => {
     console.log("connection request coming from", connection.peer);
     connection.on("open", () => {
@@ -165,10 +159,10 @@ export const SocketContextWrapper = ({
     audio.srcObject = remoteStream;
     
     console.log("stream coming up i thinkkk ??",audio,remoteStream);
-    audio
+/*     audio
       .play()
       .catch((err) => console.error("Error playing remote audio:", err));
-
+ */
     console.log('peermedia of the peer ',peerId,peersMedia)
   };
 
@@ -187,8 +181,11 @@ export const SocketContextWrapper = ({
 
       connectionToSomeone.on("close", () => {
         console.log("Connection closed with peer", peerID);
+        connectionToSomeone.off("open");
       });
 
+
+      //sending our voice media to the new coming!
       let call: MediaConnection | undefined;
       if (myPeer.current && localStream.current)
         call = myPeer.current.call(peerID, localStream.current);
@@ -197,10 +194,6 @@ export const SocketContextWrapper = ({
         call.on("stream", (remoteStream) => {
           console.log("Received remote stream from", peerID);
           handleRemoteStream(remoteStream,peerID);
-          setTimeout(() => {
-              console.log('timeout has been executed....')
-              mutePlayer(peerID)
-          }, 5000);
         });
  
         call.on("close", () => {

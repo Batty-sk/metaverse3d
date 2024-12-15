@@ -1,7 +1,10 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import CustomPerspectiveCamera from "./CustomPerspectiveCamera";
-import Player from "./Player";
+import MyPlayer from "./MyPlayer";
 import React, { useEffect, useRef, useState } from "react";
+
+import { useContext } from "react";
+import { SocketContext } from "../contexts/Socket";
 import CustomeDirectionalLight from "./CustomDirectionalLight";
 import Club from "./Club";
 
@@ -12,6 +15,7 @@ type canvasSizeProp = {
 
 const PlayGround = () => {
   const box = useRef<any>();
+  const {players}= useContext(SocketContext)
   const playerRef = useRef<any>();
   const [canvassize, updateCanvasSize] = useState<canvasSizeProp>({
     width: window.innerWidth,
@@ -58,8 +62,8 @@ const PlayGround = () => {
       <CustomPerspectiveCamera playerRef={playerRef} />
       {/*       <ambientLight/>
        */}{" "}
-      <Player playerRef={playerRef} />
-      <CustomeDirectionalLight />
+      <MyPlayer playerRef={playerRef} />
+      {players.map((x)=>(1))}
       <pointLight position={[-3, 2, 5]} color={'white'} intensity={2}/>
       <Club />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>

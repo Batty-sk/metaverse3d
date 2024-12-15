@@ -1,13 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
+import { calculateDistance } from "../utils";
 
 type playerProps = {
   playerRef: any;
 };
-const Player = ({ playerRef }: playerProps) => {
+
+
+const MyPlayer = ({ playerRef }: playerProps) => {
   const { socket } = useContext(SocketContext);
   const isInside = useState<boolean>(false);
+
+
+  //rather than calculating the players position for each movement i will do it for the each 300ms 
+  //for each 300ms all the players's position will be matched with the current player if the distance is small
+  // it means we have to make those mics unmute , if its not muted by the current user only.
 
   useEffect(() => {
     if (isInside) {
@@ -38,6 +46,7 @@ const Player = ({ playerRef }: playerProps) => {
         // you can't really talk with other people in club -> yeah
         // maybe only voice should only be probhited.
       } else {
+
       }
       switch (e.key) {
         case "ArrowUp":
@@ -53,6 +62,7 @@ const Player = ({ playerRef }: playerProps) => {
           playerRef.current.position.x += 0.1;
           break;
       }
+      socket?.emit("send-coordinates",{x:playerRef.current.position.x,y:playerRef.current.position.y})
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -69,4 +79,4 @@ const Player = ({ playerRef }: playerProps) => {
   );
 };
 
-export default Player;
+export default MyPlayer;

@@ -1,4 +1,4 @@
-import Player from "./Player";
+import MyPlayer from "./MyPlayer";
 import PlayGround  from "./PlayGround";
 
-export {Player, PlayGround}
+export {MyPlayer, PlayGround}
