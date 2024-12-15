@@ -125,6 +125,9 @@ export const SocketContextWrapper = ({
 
   const handleConnection = (connection: DataConnection) => {
     console.log("connection request coming from", connection.peer);
+    // when the new socket/player joins then we have to get all the player's coordinates who are 
+    // available in the lobby.
+    setSomeOneJoinsOrLeave([true,connection.peer])
     connection.on("open", () => {
       console.log("Connection opened with peer", connection.peer);
       if (peers.current) peers.current.set(connection.peer,connection);
@@ -136,6 +139,8 @@ export const SocketContextWrapper = ({
     });
     connection.on("close", () => {
       console.log("Connection closed with peer", connection.peer);
+      setSomeOneJoinsOrLeave([false,connection.peer])
+
     });
 
     console.log(

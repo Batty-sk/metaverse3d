@@ -27,12 +27,14 @@ const PlayGround = () => {
 
   //socket use Effect
   useEffect(() => {
-    if(socket)
+    if(socket){
+      console.log('someone-coordinates getting called....')
       socket.on("someone-coordinates", handleSomeOneCoordinates);
+    }
     return () => {
       socket?.off("someone-coordinates", handleSomeOneCoordinates);
     };
-  }, [socket]);
+  }, [socket,socket?.id]);
 
   useEffect(()=>{
     if(someoneJoinsOrLeave){
@@ -42,7 +44,6 @@ const PlayGround = () => {
       }
       else{
         playersRef.current.delete(someoneJoinsOrLeave[1])
-
       }
       setSomethingChanges(!somethingChanges)
     }
@@ -83,8 +84,12 @@ const PlayGround = () => {
   return (
     <Canvas
       className=""
-      style={{ width: canvassize.width, height: `${canvassize.height}px` }}
+      style={{ width: canvassize.width, height: `${canvassize.height}px`,    background: 'linear-gradient(180deg, #000000, #0a2a43, #1a4465)', // Deep black to dark blue
+      // Dark blue gradient
+    }}
     >
+
+
       <axesHelper />
       <CustomPerspectiveCamera playerRef={myPlayerRef} />
       {/*       <ambientLight/>
@@ -100,12 +105,12 @@ const PlayGround = () => {
         />
       ))}
 
-      <pointLight position={[-3, 2, 5]} color={"white"} intensity={5} />
+      <pointLight position={[0, 3,3]} color={"white"} intensity={13} />
       
       <Club />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>
         <planeGeometry args={[10, 20]} />
-        <meshStandardMaterial color={"orange"} side={2} />
+        <meshStandardMaterial color={"green"} side={2} />
       </mesh>
     </Canvas>
   );
