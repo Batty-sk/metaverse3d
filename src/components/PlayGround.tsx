@@ -16,7 +16,7 @@ type canvasSizeProp = {
 };
 
 const PlayGround = () => {
-  const myPlayerRef = useRef<Mesh>();
+  const myPlayerRef = useRef<Mesh>(null);
   const { socket,someoneJoinsOrLeave } = useContext(SocketContext);
   const [somethingChanges,setSomethingChanges] = useState<boolean>(false)
   const playersRef = useRef<Map<string, Mesh | null>>(new Map());

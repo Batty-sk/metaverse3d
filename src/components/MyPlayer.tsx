@@ -1,81 +1,85 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
-import { calculateDistance } from "../utils";
 import { Mesh } from "three";
 
 type playerProps = {
-  playerRef:any,
+  playerRef: React.RefObject<Mesh>;
 };
-
 
 const MyPlayer = ({ playerRef }: playerProps) => {
   const { socket } = useContext(SocketContext);
-  const isInside = useState<boolean>(false);
-
-
-  //rather than calculating the players position for each movement i will do it for the each 300ms 
-  //for each 300ms all the players's position will be matched with the current player if the distance is small
-  // it means we have to make those mics unmute , if its not muted by the current user only.
-
-  useEffect(() => {
-    if (isInside) {
-      socket?.on("club_entered", handleClubEntered);
-    }
-    return () => {
-      socket?.off("club_entered", handleClubEntered);
-    };
-  });
-  const handleClubEntered = () => {
-    // will get the music streaming data.... i need to make an audio instance and embed in the dom
-    //using js
-  };
+  const activeKeys = useRef<Set<string>>(new Set());
+  const animationFrameId = useRef<number | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log("player position", playerRef.current);
-      if (
-        playerRef.current.position.x <= -2.3 &&
-        playerRef.current.position.x >= -4 &&
-        playerRef.current.position.z >= 5 &&
-        playerRef.current.position.z <= 7
-      ) {
-        console.log("club area.....");
-        // entering the club means sending the music streaming to the current user who has entered the club
-        // and also removeing the stream after he left.
-        // you can't really talk with other people in club -> yeah
-        // maybe only voice should only be probhited.
-      } else {
+      activeKeys.current.add(e.key);
+    };
 
+    const handleKeyUp = (e: KeyboardEvent) => {
+      activeKeys.current.delete(e.key);
+    };
+
+    const updatePlayerPosition = () => {
+      if (playerRef.current) {
+        const position = playerRef.current.position;
+        let moved = false;
+
+        if (activeKeys.current.has("ArrowUp")) {
+          position.z -= 0.05;
+          playerRef.current.rotation.x -= 0.05; // Rolling animation
+          moved = true;
+        }
+        if (activeKeys.current.has("ArrowDown")) {
+          position.z += 0.05;
+          playerRef.current.rotation.x += 0.05;
+          moved = true;
+        }
+        if (activeKeys.current.has("ArrowLeft")) {
+          position.x -= 0.05;
+          playerRef.current.rotation.z += 0.05;
+          moved = true;
+        }
+        if (activeKeys.current.has("ArrowRight")) {
+          position.x += 0.05;
+          playerRef.current.rotation.z -= 0.05;
+          moved = true;
+        }
+
+        if (moved) {
+          // Emit updated position to server
+          socket?.emit("send-coordinates", {
+            x: position.x,
+            y: position.y,
+            z: position.z,
+          });
+        }
       }
-      switch (e.key) {
-        case "ArrowUp":
-          playerRef.current.position.z -= 0.1;
-          break;
-        case "ArrowDown":
-          playerRef.current.position.z += 0.1;
-          break;
-        case "ArrowLeft":
-          playerRef.current.position.x -= 0.1;
-          break;
-        case "ArrowRight":
-          playerRef.current.position.x += 0.1;
-          break;
-      }
-      socket?.emit("send-coordinates",{x:playerRef.current.position.x,y:playerRef.current.position.y,z:playerRef.current.position.z})
+
+      animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
     };
 
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+
+    animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+
+      if (animationFrameId.current !== null) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
     };
-  }, []);
+  }, [socket, playerRef]);
 
   return (
-    <mesh position={[0, 0, 1]} ref={playerRef} scale={[0.2, 0.4, 0.2]}>
-      <sphereGeometry />
-      <meshStandardMaterial color={"white"} />
-    </mesh>
+<mesh position={[0, 0, 1]} ref={playerRef} scale={[1, 1, 1]}>
+  <sphereGeometry args={[0.2, 32, 32]} />
+  <meshStandardMaterial color={"white"} />
+</mesh>
   );
 };
 

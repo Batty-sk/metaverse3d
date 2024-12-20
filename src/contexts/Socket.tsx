@@ -26,7 +26,7 @@ type socketContextProps<P, M> = {
   socketId: string;
   noOfPlayers: number;
   players: P[];
-  someoneJoinsOrLeave:[boolean, string] | undefined
+  someoneJoinsOrLeave: [boolean, string] | undefined;
   fetchCurrentUsersInTheLobby: () => void;
   messages: M[];
 };
@@ -39,7 +39,7 @@ export const SocketContext = createContext<
   noOfPlayers: 0,
   players: [],
   messages: [],
-  someoneJoinsOrLeave:undefined,
+  someoneJoinsOrLeave: undefined,
   fetchCurrentUsersInTheLobby: () => "",
 });
 
@@ -55,9 +55,11 @@ export const SocketContextWrapper = ({
 }: socketContextWrapperProps) => {
   const [socket, updateSocket] = useState<Socket | null>(null);
   const localStream = useRef<MediaStream>();
-  const [someoneJoinsOrLeave,setSomeOneJoinsOrLeave] = useState<[boolean,string]|undefined>()
-  const peers = useRef<Map<string,DataConnection>>(new Map());
-  const peersMedia = useRef<Map<string,HTMLAudioElement>>(new Map())
+  const [someoneJoinsOrLeave, setSomeOneJoinsOrLeave] = useState<
+    [boolean, string] | undefined
+  >();
+  const peers = useRef<Map<string, DataConnection>>(new Map());
+  const peersMedia = useRef<Map<string, HTMLAudioElement>>(new Map());
   const myPeer = useRef<Peer>();
 
   useEffect(() => {
@@ -76,7 +78,7 @@ export const SocketContextWrapper = ({
   }, []);
 
   useEffect(() => {
-    if (socket) { 
+    if (socket) {
       socket.emit("fetchPlayers", () => {
         console.log("players fetched ...");
       });
@@ -102,35 +104,57 @@ export const SocketContextWrapper = ({
               call.answer(localStream.current); // Send the local audio stream
               call.on("stream", (remoteStream) => {
                 console.log("Received remote audio stream from", call.peer);
-                handleRemoteStream(remoteStream,call.peer);
+                handleRemoteStream(remoteStream, call.peer);
               });
               call.on("close", () => {
                 console.log("Media call closed with", call.peer);
                 peersMedia.current?.delete(call.peer);
-              })            }
+              });
+            }
           });
         }
+        socket.on("someone-leaves", handleSomeOneLeaves);
         socket.on("someone-joins", handleSomeoneJoins);
         socket?.on("messageRequest", handleMessageRequest);
       });
-
     }
     return () => {
       socket?.off("messageRequest", handleMessageRequest);
       socket?.off("someone-joins", handleSomeoneJoins);
-      myPeer.current?.off("connection",handleConnection);
+      myPeer.current?.off("connection", handleConnection);
     };
   }, [socket]);
 
+  const handleSomeOneLeaves = (socketId: string) => {
+    if (peers.current.has(socketId)) {
+      console.log("removing the disconnected peer from the current storage..");
+      const disconnected_peer = peers.current.get(socketId);
+      try {
+        disconnected_peer?.close({ flush: true });
+      } catch (error) {
+        console.error(
+          `Failed to close peer connection for ${socketId}:`,
+          error
+        );
+      }
+      peers.current.delete(socketId);
+    }
+    if(peersMedia.current.has(socketId)){
+      peersMedia.current.delete(socketId)
+    }
+    
+    setSomeOneJoinsOrLeave([false,socketId])
+
+  };
 
   const handleConnection = (connection: DataConnection) => {
     console.log("connection request coming from", connection.peer);
-    // when the new socket/player joins then we have to get all the player's coordinates who are 
+    // when the new socket/player joins then we have to get all the player's coordinates who are
     // available in the lobby.
-    setSomeOneJoinsOrLeave([true,connection.peer])
+    setSomeOneJoinsOrLeave([true, connection.peer]);
     connection.on("open", () => {
       console.log("Connection opened with peer", connection.peer);
-      if (peers.current) peers.current.set(connection.peer,connection);
+      if (peers.current) peers.current.set(connection.peer, connection);
       connection.send("Hi, I'm your new friend!");
     });
 
@@ -139,8 +163,7 @@ export const SocketContextWrapper = ({
     });
     connection.on("close", () => {
       console.log("Connection closed with peer", connection.peer);
-      setSomeOneJoinsOrLeave([false,connection.peer])
-
+      setSomeOneJoinsOrLeave([false, connection.peer]);
     });
 
     console.log(
@@ -150,21 +173,20 @@ export const SocketContextWrapper = ({
     console.log("sending the data to the connection");
   };
 
-  const handleRemoteStream = (remoteStream: MediaStream,peerId:string) => {
-
-    if(!remoteStream){
+  const handleRemoteStream = (remoteStream: MediaStream, peerId: string) => {
+    if (!remoteStream) {
       return;
     }
     const audio = new Audio();
-    peersMedia.current.set(peerId,audio)
+    peersMedia.current.set(peerId, audio);
     audio.srcObject = remoteStream;
-    
-    console.log("stream coming up i thinkkk ??",audio,remoteStream);
-/*     audio
+
+    console.log("stream coming up i thinkkk ??", audio, remoteStream);
+    /*     audio
       .play()
       .catch((err) => console.error("Error playing remote audio:", err));
  */
-    console.log('peermedia of the peer ',peerId,peersMedia)
+    console.log("peermedia of the peer ", peerId, peersMedia);
   };
 
   const handleSomeoneJoins = (peerID: string) => {
@@ -174,7 +196,7 @@ export const SocketContextWrapper = ({
       connectionToSomeone.on("open", () => {
         console.log("Connection established with peer ", peerID);
         // You can now start sending data or setting up media streams
-        setSomeOneJoinsOrLeave([true,peerID])
+        setSomeOneJoinsOrLeave([true, peerID]);
       });
 
       connectionToSomeone.on("data", (data) => {
@@ -184,10 +206,8 @@ export const SocketContextWrapper = ({
       connectionToSomeone.on("close", () => {
         console.log("Connection closed with peer", peerID);
         connectionToSomeone.off("open");
-        setSomeOneJoinsOrLeave([false,peerID])
-
+        setSomeOneJoinsOrLeave([false, peerID]);
       });
-
 
       //sending our voice media to the new coming!
       let call: MediaConnection | undefined;
@@ -197,25 +217,23 @@ export const SocketContextWrapper = ({
       if (call) {
         call.on("stream", (remoteStream) => {
           console.log("Received remote stream from", peerID);
-          handleRemoteStream(remoteStream,peerID);
+          handleRemoteStream(remoteStream, peerID);
         });
- 
+
         call.on("close", () => {
           console.log("Media call closed with", peerID);
           peersMedia.current?.delete(peerID);
         });
-      
+
         // Store the peer connection
         if (peers.current) peers.current.set(peerID, connectionToSomeone);
       }
     }
   };
-  const mutePlayer = (peerId:string)=>{
-      let peerMediaStream = peersMedia.current.get(peerId)
-      if(peerMediaStream)
-      peerMediaStream.muted = true
-     
-  }
+  const mutePlayer = (peerId: string) => {
+    let peerMediaStream = peersMedia.current.get(peerId);
+    if (peerMediaStream) peerMediaStream.muted = true;
+  };
   const handleMessageRequest = () => {};
   return (
     <SocketContext.Provider
