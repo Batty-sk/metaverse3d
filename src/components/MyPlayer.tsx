@@ -12,9 +12,21 @@ const MyPlayer = ({ playerRef }: playerProps) => {
   const activeKeys = useRef<Set<string>>(new Set());
   const animationFrameId = useRef<number | null>(null);
 
+  // Jump-related states
+  const [isJumping, setIsJumping] = useState<boolean>(false);
+  const [velocity, setVelocity] = useState<number>(0); // Vertical velocity for jump
+  const gravity = -0.005; // Gravity strength
+  const jumpStrength = 0.05; // Initial jump strength
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       activeKeys.current.add(e.key);
+
+      // Jump logic for spacebar
+      if (e.key === " " && !isJumping) {
+        setIsJumping(true);
+        setVelocity(jumpStrength);
+      }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -26,6 +38,7 @@ const MyPlayer = ({ playerRef }: playerProps) => {
         const position = playerRef.current.position;
         let moved = false;
 
+        // Update player movement in X and Z directions
         if (activeKeys.current.has("ArrowUp")) {
           position.z -= 0.05;
           playerRef.current.rotation.x -= 0.05; // Rolling animation
@@ -47,6 +60,20 @@ const MyPlayer = ({ playerRef }: playerProps) => {
           moved = true;
         }
 
+        // Handle jumping physics (gravity + jump)
+        if (isJumping) {
+          position.y += velocity; // A
+
+
+          setVelocity((prevVelocity) => prevVelocity + gravity);
+          // Check if player has hit the ground
+          if (position.y <= 0) {
+            position.y = 0; // Keep player on the ground
+            setIsJumping(false); // Stop jumping
+            setVelocity(0); // Reset velocity when touching the ground
+          }
+        }
+
         if (moved) {
           // Emit updated position to server
           socket?.emit("send-coordinates", {
@@ -63,6 +90,7 @@ const MyPlayer = ({ playerRef }: playerProps) => {
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keyup", handleKeyUp);
 
+    // Start animation frame
     animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
 
     return () => {
@@ -73,13 +101,13 @@ const MyPlayer = ({ playerRef }: playerProps) => {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [socket, playerRef]);
+  }, [socket, playerRef, isJumping, velocity]);
 
   return (
-<mesh position={[0, 0, 1]} ref={playerRef} scale={[1, 1, 1]}>
-  <sphereGeometry args={[0.2, 32, 32]} />
-  <meshStandardMaterial color={"white"} />
-</mesh>
+    <mesh position={[0, 0, 1]} ref={playerRef} scale={[1, 1, 1]}>
+      <sphereGeometry args={[0.2, 32, 32]} />
+      <meshStandardMaterial color={"white"} />
+    </mesh>
   );
 };
 
