@@ -9,6 +9,7 @@ import { SocketContext } from "../contexts/Socket";
 import CustomeDirectionalLight from "./CustomDirectionalLight";
 import Club from "./Club";
 import Players from "./Players";
+import { calculateDistance } from "../utils";
 
 type canvasSizeProp = {
   width: number;
@@ -74,7 +75,12 @@ const PlayGround = () => {
         playerRef.position.x = args.x;
         playerRef.position.y = args.y;
         playerRef.position.z = args.z;
+        calculateDistance({userX:playerRef?.position.x,userZ:playerRef?.position.z,
+          currentPlayerX:myPlayerRef.current!.position.x,currentPlayerZ:myPlayerRef.current!.position.z})
       }
+
+ 
+    
     }
   };
   /* window.requestAnimationFrame */

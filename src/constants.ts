@@ -1,1 +1,1 @@
-export const RADIUS = 8
+export const RADIUS = 2

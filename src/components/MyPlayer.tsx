@@ -11,7 +11,6 @@ const MyPlayer = ({ playerRef }: playerProps) => {
   const { socket } = useContext(SocketContext);
   const activeKeys = useRef<Set<string>>(new Set());
   const animationFrameId = useRef<number | null>(null);
-
   // Jump-related states
   const [isJumping, setIsJumping] = useState<boolean>(false);
   const [velocity, setVelocity] = useState<number>(0); // Vertical velocity for jump

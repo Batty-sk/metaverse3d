@@ -8,8 +8,8 @@ type PlayersProps = {
 
 const Players = (args: PlayersProps) => {
   return (
-    <mesh ref={args.PlayerRef} position={[0, 0, 1]} scale={[0.2, 0.4, 0.2]}>
-      <sphereGeometry />
+    <mesh position={[0, 0, 1]} ref={args.PlayerRef} scale={[1, 1, 1]}>
+      <sphereGeometry args={[0.2, 32, 32]} />
       <meshStandardMaterial color={args.Player_color} />
     </mesh>
   );
