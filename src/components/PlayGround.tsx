@@ -4,11 +4,13 @@ import MyPlayer from "./MyPlayer";
 import React, { useEffect, useRef, useState } from "react";
 import { Mesh } from "three";
 
+import ChatBar from "./ChatArea";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
 import Club from "./Club";
 import Players from "./Players";
 import { calculateDistance } from "../utils";
+import ChatArea from "./ChatArea";
 
 type canvasSizeProp = {
   width: number;
@@ -105,7 +107,9 @@ const PlayGround = () => {
   // this playground would have lot of players in it..
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
-      <div style={{ position: "absolute",top:0,left:0,color:'white',fontSize:'40px',border:'5px solid white',zIndex:1 }}>Chat Component</div>
+      <div style={{ position: "absolute",top:0,left:0,zIndex:1 }}>
+        <ChatArea />
+      </div>
     <Canvas
       className=""
       style={{ width: canvassize.width, height: `${canvassize.height}px`,    background: 'linear-gradient(180deg, #000000, #0a2a43, #1a4465)', // Deep black to dark blue
@@ -129,8 +133,9 @@ const PlayGround = () => {
         />
       ))}
 
-      <pointLight position={[0, 3,3]} color={"white"} intensity={13} />
-      
+      <pointLight position={[0, 1.5,-5]} color={"white"} intensity={6} />
+      <pointLight position={[0, 1.5,2]} color={"white"} intensity={6} />
+
       <Club />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>
         <planeGeometry args={[10, 20]} />
