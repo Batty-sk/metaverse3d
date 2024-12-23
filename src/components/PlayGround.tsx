@@ -6,7 +6,6 @@ import { Mesh } from "three";
 
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
-import CustomeDirectionalLight from "./CustomDirectionalLight";
 import Club from "./Club";
 import Players from "./Players";
 import { calculateDistance } from "../utils";
@@ -18,9 +17,10 @@ type canvasSizeProp = {
 
 const PlayGround = () => {
   const myPlayerRef = useRef<Mesh>(null);
-  const { socket,someoneJoinsOrLeave } = useContext(SocketContext);
+  const { socket,someoneJoinsOrLeave,playersMedia } = useContext(SocketContext);
+  //getting the media variables from the sockets context
   const [somethingChanges,setSomethingChanges] = useState<boolean>(false)
-  const playersRef = useRef<Map<string, Mesh | null>>(new Map());
+  const playersRef =  useRef<Map<string, Mesh | null>>(new Map());
   const [canvassize, updateCanvasSize] = useState<canvasSizeProp>({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -71,12 +71,28 @@ const PlayGround = () => {
   const handleSomeOneCoordinates = (args: coordinates) => {
     if (playersRef.current.has(args.socketId)) {
       const playerRef = playersRef.current.get(args.socketId);
+      let Media = null
+      if(!playersMedia?.current.has(args.socketId))
+      {
+        console.log("This player doesn't assosicated with the media ! revertting the distance calculations");
+        return 
+      }
+      Media = playersMedia.current.get(args.socketId)
+
       if (playerRef) {
         playerRef.position.x = args.x;
         playerRef.position.y = args.y;
         playerRef.position.z = args.z;
-        calculateDistance({userX:playerRef?.position.x,userZ:playerRef?.position.z,
-          currentPlayerX:myPlayerRef.current!.position.x,currentPlayerZ:myPlayerRef.current!.position.z})
+       if( calculateDistance({userX:playerRef?.position.x,userZ:playerRef?.position.z,
+          currentPlayerX:myPlayerRef.current!.position.x,currentPlayerZ:myPlayerRef.current!.position.z})){
+            console.log("players' media object",Media)
+            Media!.muted = false
+            Media?.play().catch(err=>{console.log("some error while playing the remote stream.")})
+          }
+        else{
+          Media!.muted = true
+          console.log("he is too far to be calcuaated ....")
+        }
       }
 
  
@@ -88,6 +104,8 @@ const PlayGround = () => {
 
   // this playground would have lot of players in it..
   return (
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      <div style={{ position: "absolute",top:0,left:0,color:'white',fontSize:'40px',border:'5px solid white',zIndex:1 }}>Chat Component</div>
     <Canvas
       className=""
       style={{ width: canvassize.width, height: `${canvassize.height}px`,    background: 'linear-gradient(180deg, #000000, #0a2a43, #1a4465)', // Deep black to dark blue
@@ -119,6 +137,7 @@ const PlayGround = () => {
         <meshStandardMaterial color={"green"} side={2} />
       </mesh>
     </Canvas>
+    </div>
   );
 };
 

@@ -25,7 +25,7 @@ type socketContextProps<P, M> = {
   socket: Socket | null;
   socketId: string;
   noOfPlayers: number;
-  players: P[];
+  playersMedia: React.MutableRefObject<Map<string, HTMLAudioElement>>|undefined
   someoneJoinsOrLeave: [boolean, string] | undefined;
   fetchCurrentUsersInTheLobby: () => void;
   messages: M[];
@@ -37,7 +37,7 @@ export const SocketContext = createContext<
   socket: null,
   socketId: "",
   noOfPlayers: 0,
-  players: [],
+  playersMedia:undefined,
   messages: [],
   someoneJoinsOrLeave: undefined,
   fetchCurrentUsersInTheLobby: () => "",
@@ -178,8 +178,9 @@ export const SocketContextWrapper = ({
       return;
     }
     const audio = new Audio();
-    peersMedia.current.set(peerId, audio);
     audio.srcObject = remoteStream;
+    peersMedia.current.set(peerId, audio);
+
 
     console.log("stream coming up i thinkkk ??", audio, remoteStream);
     /*     audio
@@ -241,7 +242,7 @@ export const SocketContextWrapper = ({
         socket: socket,
         socketId: "",
         noOfPlayers: 0,
-        players: [],
+        playersMedia: peersMedia,
         messages: [],
         someoneJoinsOrLeave,
         fetchCurrentUsersInTheLobby: /* fetchCurrentUsersInTheLobby */ () => 0,
