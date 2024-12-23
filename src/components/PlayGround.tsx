@@ -11,6 +11,7 @@ import Club from "./Club";
 import Players from "./Players";
 import { calculateDistance } from "../utils";
 import ChatArea from "./ChatArea";
+import YRoad from "./Yroad";
 
 type canvasSizeProp = {
   width: number;
@@ -117,7 +118,7 @@ const PlayGround = () => {
     }}
     >
 
-
+    <YRoad />
       <axesHelper />
       <CustomPerspectiveCamera playerRef={myPlayerRef} />
       {/*       <ambientLight/>
@@ -141,6 +142,8 @@ const PlayGround = () => {
         <planeGeometry args={[10, 20]} />
         <meshStandardMaterial color={"green"} side={2} />
       </mesh>
+
+
     </Canvas>
     </div>
   );
