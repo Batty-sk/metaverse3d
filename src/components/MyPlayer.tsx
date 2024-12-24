@@ -65,11 +65,10 @@ const MyPlayer = ({ playerRef }: playerProps) => {
 
 
           setVelocity((prevVelocity) => prevVelocity + gravity);
-          // Check if player has hit the ground
           if (position.y <= 0) {
-            position.y = 0; // Keep player on the ground
-            setIsJumping(false); // Stop jumping
-            setVelocity(0); // Reset velocity when touching the ground
+            position.y = 0; 
+            setIsJumping(false);
+            setVelocity(0); 
           }
         }
 

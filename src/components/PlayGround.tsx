@@ -2,7 +2,7 @@ import { Canvas, useThree } from "@react-three/fiber";
 import CustomPerspectiveCamera from "./CustomPerspectiveCamera";
 import MyPlayer from "./MyPlayer";
 import React, { useEffect, useRef, useState } from "react";
-import { Mesh } from "three";
+import { Color, Mesh, MeshStandardMaterial } from "three";
 
 import ChatBar from "./ChatArea";
 import { useContext } from "react";
@@ -24,6 +24,8 @@ const PlayGround = () => {
   //getting the media variables from the sockets context
   const [somethingChanges,setSomethingChanges] = useState<boolean>(false)
   const playersRef =  useRef<Map<string, Mesh | null>>(new Map());
+  const playersMaterialRef =  useRef<Map<string, MeshStandardMaterial | null>>(new Map());
+
   const [canvassize, updateCanvasSize] = useState<canvasSizeProp>({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -77,6 +79,7 @@ const PlayGround = () => {
       let Media = null
       if(!playersMedia?.current.has(args.socketId))
       {
+    
         console.log("This player doesn't assosicated with the media ! revertting the distance calculations");
         return 
       }
@@ -90,10 +93,20 @@ const PlayGround = () => {
           currentPlayerX:myPlayerRef.current!.position.x,currentPlayerZ:myPlayerRef.current!.position.z})){
             console.log("players' media object",Media)
             Media!.muted = false
+            // we need to add the volume.
+            if(playersMaterialRef.current.has(args.socketId))
+              {
+                console.log('player volume',Media?.volume)
+                const player = playersMaterialRef.current.get(args.socketId);
+                console.log('setting up the color..')
+                player!.color = new Color( "blue" )
+              
+              }
             Media?.play().catch(err=>{console.log("some error while playing the remote stream.")})
           }
         else{
-          Media!.muted = true
+      
+                Media!.muted = true
           console.log("he is too far to be calcuaated ....")
         }
       }
@@ -131,6 +144,7 @@ const PlayGround = () => {
           Player_name={playerId}
           Player_color="blue"
           PlayerRef={(el) => playersRef.current.set(playerId, el)}
+          PlayerMaterialMesh={(el) => playersMaterialRef.current.set(playerId, el)}
         />
       ))}
 

@@ -4,7 +4,7 @@ const YRoad = () => {
   return (
     <>
       <mesh position={[0, -0.39, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[1, 20]} />
+        <planeGeometry args={[2, 20]} />
         <meshStandardMaterial color={"gray"} side={2} />
       </mesh>
 
