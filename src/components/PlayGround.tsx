@@ -1,8 +1,8 @@
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import CustomPerspectiveCamera from "./CustomPerspectiveCamera";
 import MyPlayer from "./MyPlayer";
 import React, { useEffect, useRef, useState } from "react";
-import { Color, Mesh, MeshStandardMaterial } from "three";
+import { Color, Mesh, MeshStandardMaterial, TextureLoader } from "three";
 
 import ChatBar from "./ChatArea";
 import { useContext } from "react";
@@ -11,7 +11,7 @@ import Club from "./Club";
 import Players from "./Players";
 import { calculateDistance } from "../utils";
 import ChatArea from "./ChatArea";
-import YRoad from "./Yroad";
+import YRoad from "./YRoad";
 
 type canvasSizeProp = {
   width: number;
@@ -19,6 +19,8 @@ type canvasSizeProp = {
 };
 
 const PlayGround = () => {
+
+
   const myPlayerRef = useRef<Mesh>(null);
   const { socket,someoneJoinsOrLeave,playersMedia } = useContext(SocketContext);
   //getting the media variables from the sockets context
@@ -153,7 +155,7 @@ const PlayGround = () => {
 
       <Club />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>
-        <planeGeometry args={[10, 20]} />
+        <planeGeometry args={[15, 25]} />
         <meshStandardMaterial color={"green"} side={2} />
       </mesh>
 
