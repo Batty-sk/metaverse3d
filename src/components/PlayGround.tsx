@@ -154,7 +154,7 @@ const PlayGround = () => {
       <pointLight position={[0, 1.5,2]} color={"white"} intensity={6} />
 
       <Club />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.4, 0]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[15, 25]} />
         <meshStandardMaterial color={"green"} side={2} />
       </mesh>

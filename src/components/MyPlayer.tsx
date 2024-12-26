@@ -65,8 +65,8 @@ const MyPlayer = ({ playerRef }: playerProps) => {
 
 
           setVelocity((prevVelocity) => prevVelocity + gravity);
-          if (position.y <= 0) {
-            position.y = 0; 
+          if (position.y <= 0.3) {
+            position.y = 0.3; 
             setIsJumping(false);
             setVelocity(0); 
           }
@@ -102,7 +102,7 @@ const MyPlayer = ({ playerRef }: playerProps) => {
   }, [socket, playerRef, isJumping, velocity]);
 
   return (
-    <mesh position={[0, 0, 1]} ref={playerRef} scale={[1, 1, 1]}>
+    <mesh position={[0, 0.3, 1]} ref={playerRef} scale={[1, 1, 1]}>
       <sphereGeometry args={[0.2, 32, 32]} />
       <meshStandardMaterial color={"white"} />
     </mesh>
