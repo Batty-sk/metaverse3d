@@ -1,3 +1,3 @@
-import roadBaseTexture from "./roadTexture/Metal046B_1K-JPG_Color.jpg"
+import roadBaseTexture from "./roadTexture/Road007_1K-JPG_Color.jpg"
 
 export {roadBaseTexture}
