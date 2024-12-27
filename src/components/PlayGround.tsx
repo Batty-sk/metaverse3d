@@ -13,6 +13,7 @@ import { calculateDistance } from "../utils";
 import ChatArea from "./ChatArea";
 import YRoad from "./YRoad";
 import { pavingStoneTexture } from "../assets/textures";
+import StreetLamp from "./models/StreetLamp";
 
 type canvasSizeProp = {
   width: number;
@@ -152,9 +153,9 @@ const PlayGround = () => {
           PlayerMaterialMesh={(el) => playersMaterialRef.current.set(playerId, el)}
         />
       ))}
-      <pointLight position={[0, 1.5,-5]} color={"white"} intensity={6} />
-      <pointLight position={[0, 1.5,2]} color={"white"} intensity={6} />
-      <pointLight position={[-2, 1.5,6]} color={"white"} intensity={6} />
+    
+        <StreetLamp positionLight={[0.5,3.6,0]} position={[-1.1,-0.1,0]} rotation={[0,0,0]}/>
+        <StreetLamp positionLight={[-0.6,3.6,8]} position={[1.1,-0.1,8]} rotation={[0,Math.PI,0]}/>
 
       <Club />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>

@@ -1,9 +1,18 @@
-import { OrbitControls, useGLTF } from 'react-three/drei';
-function Model() {
-    // Load the GLB file using the useGLTF hook
-    const gltf = useGLTF('/models/your-model.glb'); // Ensure the path is correct
+import {useGLTF } from '@react-three/drei';
+import { Vector3 } from '@react-three/fiber';
+type streetLampProps = {
+    position:Vector3,
+    rotation:Vector3,
+    positionLight:Vector3
+}
+//[0.5,3.6,0]
+function StreetLamp(args:streetLampProps) {
+    const gltf = useGLTF('/models/StreetLamp.glb'); 
   
-    return <primitive object={gltf.scene} scale={0.5} />;
+    return<>
+    <pointLight position={args.positionLight} color={"white"} intensity={25} />
+    <primitive object={gltf.scene} scale={[0.2, 0.3, 0.1]} position={args.position} rotation={args.rotation} /></>;
   }
 
+  export default StreetLamp
 
