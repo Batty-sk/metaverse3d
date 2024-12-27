@@ -12,6 +12,7 @@ import Players from "./Players";
 import { calculateDistance } from "../utils";
 import ChatArea from "./ChatArea";
 import YRoad from "./YRoad";
+import { pavingStoneTexture } from "../assets/textures";
 
 type canvasSizeProp = {
   width: number;
@@ -20,7 +21,9 @@ type canvasSizeProp = {
 
 const PlayGround = () => {
 
-
+    const [paveColorMap] = useLoader(TextureLoader, [
+      pavingStoneTexture
+    ]);
   const myPlayerRef = useRef<Mesh>(null);
   const { socket,someoneJoinsOrLeave,playersMedia } = useContext(SocketContext);
   //getting the media variables from the sockets context
@@ -149,14 +152,14 @@ const PlayGround = () => {
           PlayerMaterialMesh={(el) => playersMaterialRef.current.set(playerId, el)}
         />
       ))}
-      <ambientLight />
       <pointLight position={[0, 1.5,-5]} color={"white"} intensity={6} />
       <pointLight position={[0, 1.5,2]} color={"white"} intensity={6} />
+      <pointLight position={[-2, 1.5,6]} color={"white"} intensity={6} />
 
       <Club />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[15, 25]} />
-        <meshStandardMaterial color={"green"} side={2} />
+        <meshStandardMaterial  map={paveColorMap}  side={2} />
       </mesh>
 
 
