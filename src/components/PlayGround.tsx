@@ -1,6 +1,7 @@
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import CustomPerspectiveCamera from "./CustomPerspectiveCamera";
 import MyPlayer from "./MyPlayer";
+import Moon from "./Moon";
 import React, { useEffect, useRef, useState } from "react";
 import { Color, Mesh, MeshStandardMaterial, TextureLoader } from "three";
 
@@ -138,7 +139,6 @@ const PlayGround = () => {
     >
 
     <YRoad />
-      <axesHelper />
       <CustomPerspectiveCamera playerRef={myPlayerRef} />
       {/*       <ambientLight/>
        */}{" "}
@@ -163,7 +163,7 @@ const PlayGround = () => {
         <meshStandardMaterial  map={paveColorMap}  side={2} />
       </mesh>
 
-
+        <Moon />
     </Canvas>
     </div>
   );
