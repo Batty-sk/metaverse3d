@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { moonTexture } from '../assets/textures';
 
 const Moon: React.FC = () => {
-  const [colorMap, bumpMap] = useTexture([
+  const [colorMap] = useTexture([
     moonTexture,
   ]);
 

@@ -15,6 +15,8 @@ import ChatArea from "./ChatArea";
 import YRoad from "./YRoad";
 import { pavingStoneTexture } from "../assets/textures";
 import StreetLamp from "./models/StreetLamp";
+import SignBoard from "./SignBoard";
+import Tree from "./models/Tree";
 
 type canvasSizeProp = {
   width: number;
@@ -164,6 +166,8 @@ const PlayGround = () => {
       </mesh>
 
         <Moon />
+        <Tree position={[5,0.3,-5]} /> 
+        <SignBoard />
     </Canvas>
     </div>
   );
