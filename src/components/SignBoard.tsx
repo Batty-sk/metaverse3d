@@ -18,12 +18,13 @@ const SignBoard = () => {
         <meshStandardMaterial map={colorMap} />
         </mesh>
         <Text 
-        fontSize={0.2}
-        position={[0,0.05,0.2]}
-        color={"black"}
+        fontSize={0.1}
+        position={[0,0,0.2]}
+        color={"#C19A6B"}
         anchorY={"middle"}
+        font="/fonts/Rockybilly.ttf"
          >
-        {"see behind"}
+        {"Welcome"}
          </Text>
 
       </group>

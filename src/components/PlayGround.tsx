@@ -17,6 +17,7 @@ import { pavingStoneTexture } from "../assets/textures";
 import StreetLamp from "./models/StreetLamp";
 import SignBoard from "./SignBoard";
 import Tree from "./models/Tree";
+import NeonText from "./NeonText";
 
 type canvasSizeProp = {
   width: number;
@@ -157,14 +158,13 @@ const PlayGround = () => {
       ))}
     
         <StreetLamp positionLight={[0.5,3.6,0]} position={[-1.1,-0.1,0]} rotation={[0,0,0]}/>
-        <StreetLamp positionLight={[-0.6,3.6,8]} position={[1.1,-0.1,8]} rotation={[0,Math.PI,0]}/>
 
       <Club />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <planeGeometry args={[15, 25]} />
         <meshStandardMaterial  map={paveColorMap}  side={2} />
       </mesh>
-
+        
         <Moon />
         <Tree position={[5,0.3,-5]} /> 
         <SignBoard />

@@ -10,7 +10,7 @@ function StreetLamp(args:streetLampProps) {
     const gltf = useGLTF('/models/StreetLamp.glb'); 
   
     return<>
-    <pointLight position={args.positionLight} color={"white"} intensity={25} />
+    <pointLight position={args.positionLight} color={"white"} intensity={15} />
     <primitive object={gltf.scene} scale={[0.2, 0.3, 0.1]} position={args.position} rotation={args.rotation} /></>;
   }
 

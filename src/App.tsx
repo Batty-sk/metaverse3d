@@ -1,4 +1,3 @@
-import React from "react";
 import { PlayGround } from "./components";
 
 const App = () => {
