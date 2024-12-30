@@ -19,7 +19,7 @@ const ChatBar = () => {
   );
 };
 
-const NotificationComponent = (chatNotification: chatNotification) => {
+const NotificationComponent = ({ chatNotification }: { chatNotification: chatNotification }) => {
   const totalNotifications = Array.from(chatNotification.values()).reduce(
     (sum, value) => sum + value,
     0
@@ -90,7 +90,7 @@ const ChatArea = () => {
           onClick={() => updateChatOpen(true)}
         />
 
-        <NotificationComponent {...chatNotification} />
+        <NotificationComponent chatNotification={chatNotification} />
       </div>
     );
   return (
