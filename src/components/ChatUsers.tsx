@@ -56,7 +56,7 @@ const ChatUsers = ({
   return (
     <div>
       {peersState.map((x) => (
-        <ChatBar key={x} peerId={x} handleMicMute={handleMicToggle}/>
+        <ChatBar key={x.peerId} peerId={x.peerId} handleMicMute={handleMicToggle}/>
       ))}
     </div>
   );
