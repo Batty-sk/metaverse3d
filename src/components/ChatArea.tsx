@@ -1,23 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { chatIcon } from "../assets";
+import { chatIcon, globeIcon } from "../assets";
 import { SocketContext } from "../contexts/Socket";
 import { useContext } from "react";
+import ChatUsers from "./ChatUsers";
 
-const ChatBar = () => {
-  return (
-    <div className="w-full mx-2">
-      <div className="flex justify-between">
-        <div className="flex">
-          <span>User</span>
-          <h5>Username</h5>
-        </div>
-        <div className="flex">
-          <span>Mic</span>
-        </div>
-      </div>
-    </div>
-  );
-};
+
 
 const NotificationComponent = ({ chatNotification }: { chatNotification: chatNotification }) => {
   const totalNotifications = Array.from(chatNotification.values()).reduce(
@@ -26,22 +13,23 @@ const NotificationComponent = ({ chatNotification }: { chatNotification: chatNot
   );
 
   return (
-    <div>
+    <div className="absolute bottom-0 right-0 rounded-full bg-red-500">
       {totalNotifications > 0 && (
         <div>
-          <p>Total Notifications: {totalNotifications}</p>
+          <p className="text-white">{totalNotifications}</p>
         </div>
       )}
     </div>
   );
 };
+
 interface chatMessage {
   from: string;
   message: string;
 }
 
-type Chat = Map<string, string[]>;
-type chatNotification = Map<string, number>;
+export type Chat = Map<string, string[]>;
+export type chatNotification = Map<string, number>;
 
 const ChatArea = () => {
   const { socket } = useContext(SocketContext);
@@ -94,20 +82,19 @@ const ChatArea = () => {
       </div>
     );
   return (
-    <div className="min-h-96  min-w-96 w-4/12" style={{ color: "white" }}>
-      <div className="flex justify-between">
-        <h1 className="text-2xl font-mono text-green-400">Users</h1>
-        <span
-          className="text-white cursor-pointer"
-          onClick={() => updateChatOpen(false)}
-        >
+    <div className="min-h-96  min-w-96 w-4/12 bg-[#efebce] rounded-sm m-2">
+      <div className="flex justify-center p-2">
+        <h1 className="text-3xl font-mono w-full text-black text-center flex justify-center font-bold">Global <img src={globeIcon} className="animate ms-2" height={35} width={35} /> </h1>
+          <span
+            className="text-2xl font-bold mx-2 text-red-600 cursor-pointer"
+            onClick={() => updateChatOpen(false)}
+          >
           X
         </span>
+      </div> 
+      <div className="h-full px-2">
+        <ChatUsers chatNotifications={chatNotification} chats={chats} updateChatNotifications={updateChatNotifications}/>
       </div>
-      <div className="chat-area">
-        <ChatBar />
-      </div>
-      <div className="chat-section"></div>
     </div>
   );
 };

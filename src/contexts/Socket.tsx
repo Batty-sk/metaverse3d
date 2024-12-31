@@ -8,6 +8,7 @@ import React, {
 import Peer, { MediaConnection } from "peerjs";
 import { DataConnection } from "peerjs";
 import { io, Socket } from "socket.io-client";
+import { Mesh, Vector3 } from "three";
 
 type Message = {
   from: string;
@@ -25,8 +26,9 @@ type socketContextProps<P, M> = {
   socket: Socket | null;
   socketId: string;
   noOfPlayers: number;
-  playersMedia: React.MutableRefObject<Map<string, HTMLAudioElement>>|undefined
-  someoneJoinsOrLeave: [boolean, string] | undefined;
+  playersMedia: React.MutableRefObject<Map<string, HTMLAudioElement>>|undefined;
+  myPlayerRef:React.RefObject<Mesh>;
+  peersState: peersState[];
   fetchCurrentUsersInTheLobby: () => void;
   messages: M[];
 };
@@ -38,27 +40,29 @@ export const SocketContext = createContext<
   socketId: "",
   noOfPlayers: 0,
   playersMedia:undefined,
+  myPlayerRef: React.createRef<Mesh>(),
   messages: [],
-  someoneJoinsOrLeave: undefined,
+  peersState:[],
   fetchCurrentUsersInTheLobby: () => "",
 });
 
 type socketContextWrapperProps = {
   children: ReactNode;
 };
-type peerJoinsProp = {
-  peerID: string;
-};
+
+interface peersState{
+  peerId:string,
+  position:[number,number,number]
+}
 
 export const SocketContextWrapper = ({
   children,
 }: socketContextWrapperProps) => {
   const [socket, updateSocket] = useState<Socket | null>(null);
   const localStream = useRef<MediaStream>();
-  const [someoneJoinsOrLeave, setSomeOneJoinsOrLeave] = useState<
-    [boolean, string] | undefined
-  >();
-  const peers = useRef<Map<string, DataConnection>>(new Map());
+  const myPlayerRef = useRef<Mesh>(null);
+  const peers = useRef<Map<string, DataConnection>>(new Map()); 
+  const [peersState,updatePeersState] = useState<peersState[]>([]) //creating a new state variable which will holds the current players in the lobby.
   const peersMedia = useRef<Map<string, HTMLAudioElement>>(new Map());
   const myPeer = useRef<Peer>();
 
@@ -143,7 +147,7 @@ export const SocketContextWrapper = ({
       peersMedia.current.delete(socketId)
     }
     
-    setSomeOneJoinsOrLeave([false,socketId])
+   updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== socketId));
 
   };
 
@@ -151,19 +155,22 @@ export const SocketContextWrapper = ({
     console.log("connection request coming from", connection.peer);
     // when the new socket/player joins then we have to get all the player's coordinates who are
     // available in the lobby.
-    setSomeOneJoinsOrLeave([true, connection.peer]);
     connection.on("open", () => {
       console.log("Connection opened with peer", connection.peer);
-      if (peers.current) peers.current.set(connection.peer, connection);
+      peers.current.set(connection.peer, connection);
       connection.send("Hi, I'm your new friend!");
     });
 
     connection.on("data", (data) => {
       console.log("Received data from peer:", data);
+      const position = data as [x:number,y:number,z:number]
+      updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,position:position}]);
+
     });
     connection.on("close", () => {
       console.log("Connection closed with peer", connection.peer);
-      setSomeOneJoinsOrLeave([false, connection.peer]);
+      peers.current.delete(connection.peer)
+      updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== connection.peer));
     });
 
     console.log(
@@ -197,17 +204,19 @@ export const SocketContextWrapper = ({
       connectionToSomeone.on("open", () => {
         console.log("Connection established with peer ", peerID);
         // You can now start sending data or setting up media streams
-        setSomeOneJoinsOrLeave([true, peerID]);
+        peers.current.set(peerID, connectionToSomeone);
+        updatePeersState((prevArray) => [...prevArray,{peerId:peerID,position:[0,0.3,0]}]);
+        console.log('sending my coordinates to the new joiny',myPlayerRef.current?.position)
+        connectionToSomeone.send(myPlayerRef.current?[...myPlayerRef.current.position]:[0,0.3,0]);
       });
-
       connectionToSomeone.on("data", (data) => {
         console.log("Received data from peer:", data);
       });
-
       connectionToSomeone.on("close", () => {
         console.log("Connection closed with peer", peerID);
         connectionToSomeone.off("open");
-        setSomeOneJoinsOrLeave([false, peerID]);
+        peers.current.delete(peerID)
+        updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== peerID));
       });
 
       //sending our voice media to the new coming!
@@ -227,13 +236,8 @@ export const SocketContextWrapper = ({
         });
 
         // Store the peer connection
-        if (peers.current) peers.current.set(peerID, connectionToSomeone);
       }
     }
-  };
-  const mutePlayer = (peerId: string) => {
-    let peerMediaStream = peersMedia.current.get(peerId);
-    if (peerMediaStream) peerMediaStream.muted = true;
   };
   const handleMessageRequest = () => {};
   return (
@@ -243,8 +247,9 @@ export const SocketContextWrapper = ({
         socketId: "",
         noOfPlayers: 0,
         playersMedia: peersMedia,
+        myPlayerRef,
         messages: [],
-        someoneJoinsOrLeave,
+        peersState,
         fetchCurrentUsersInTheLobby: /* fetchCurrentUsersInTheLobby */ () => 0,
       }}
     >
