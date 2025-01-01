@@ -54,10 +54,22 @@ const ChatUsers = ({
     return true;
   }
   return (
-    <div>
-      {peersState.map((x) => (
+    <div className="relative overflow-x-hidden h-full overflow-y-hidden">
+    <div className="h-full overflow-y-scroll overflow-x-hidden">
+      {!peersState.length?<h3>No Online Users</h3>:
+      peersState.map((x) => (
         <ChatBar key={x.peerId} peerId={x.peerId} handleMicMute={handleMicToggle}/>
       ))}
+    </div>
+    <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#eae2b7]  min-h-80">
+        <div className="flex justify-between py-2">
+          <h1 className="w-full px-2">User</h1>
+          <span className="px-2 cursor-pointer font-bold">X</span>
+          </div>
+          <div className="h-full bg-slate-50 m-2 rounded-md">
+
+          </div>
+    </div>
     </div>
   );
 };

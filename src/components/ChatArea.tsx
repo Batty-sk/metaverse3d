@@ -82,7 +82,7 @@ const ChatArea = () => {
       </div>
     );
   return (
-    <div className="min-h-96  min-w-96 w-4/12 bg-[#efebce] rounded-sm m-2">
+    <div className="min-h-96 h-96 min-w-96 w-4/12 bg-[#efebce] rounded-sm m-2">
       <div className="flex justify-center p-2">
         <h1 className="text-3xl font-mono w-full text-black text-center flex justify-center font-bold">Global <img src={globeIcon} className="animate ms-2" height={35} width={35} /> </h1>
           <span

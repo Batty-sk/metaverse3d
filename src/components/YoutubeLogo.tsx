@@ -29,8 +29,8 @@ const WhiteTriangle: React.FC<MeshProps> = (props) => {
 const YouTubeLogo: React.FC = () => {
   return (
     <group >
-      <RedRectangle position={[-5,2.5,Math.PI+2.5]} />
-      <WhiteTriangle position={[-4.9,2.5,Math.PI+2.5]} />
+      <RedRectangle position={[-5,2.6,Math.PI+2.5]} />
+      <WhiteTriangle position={[-4.9,2.6,Math.PI+2.5]} />
     </group>
   );
 };

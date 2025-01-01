@@ -41,7 +41,7 @@ const CustomPerspectiveCamera = ({ playerRef }: { playerRef: React.RefObject<any
     return () => clearInterval(interval);
   }, [playerRef]);
 
-  return <perspectiveCamera  ref={cameraRef} position={[0, 1, 5]} rotation={[0,0,0]}  />;
+  return <perspectiveCamera  ref={cameraRef} position={[0, 1, 5]} rotation={[0,0,0]}/>;
 };
 
 export default CustomPerspectiveCamera;

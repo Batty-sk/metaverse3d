@@ -15,6 +15,7 @@ import YRoad from "./YRoad";
 import { pavingStoneTexture } from "../assets/textures";
 import StreetLamp from "./models/StreetLamp";
 import YouTubeLogo from "./YoutubeLogo";
+import YouTubePlayer from "./YoutubePlayer";
 
 type canvasSizeProp = {
   width: number;
@@ -151,6 +152,7 @@ const PlayGround = () => {
           // Dark blue gradient
         }}
       >
+
         <YRoad />
         <CustomPerspectiveCamera playerRef={myPlayerRef} />
         {/*       <ambientLight/>
@@ -181,6 +183,8 @@ const PlayGround = () => {
           <meshStandardMaterial map={paveColorMap} side={2} />
         </mesh>
         <Moon />
+        <YouTubePlayer />
+
       </Canvas>
     </div>
   );

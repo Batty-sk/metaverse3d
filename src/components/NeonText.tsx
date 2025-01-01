@@ -10,7 +10,7 @@ const NeonText = () => {
         color="#1a4465"
         font='/fonts/Rockybilly.ttf'
       >
-        Better Club
+        Better Player
         <meshStandardMaterial emissive="yellow" emissiveIntensity={10} />
       </Text>
 
