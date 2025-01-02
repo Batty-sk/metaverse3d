@@ -183,8 +183,6 @@ const PlayGround = () => {
           <meshStandardMaterial map={paveColorMap} side={2} />
         </mesh>
         <Moon />
-        <YouTubePlayer />
-
       </Canvas>
     </div>
   );

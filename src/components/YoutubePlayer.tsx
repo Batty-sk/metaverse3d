@@ -21,24 +21,22 @@ const YouTubePlayer = () => {
   };
 
   return (
-    <mesh ref={meshRef} position={[0, 2, 5]}>
-      <planeGeometry args={[4, 2.5]} />
-      <meshStandardMaterial color="black" />
-      
+    <mesh ref={meshRef} position={[-5-2.4, 1,Math.PI+2.5]} >
       <Html
         transform
         occlude
         distanceFactor={1.5}
-        position={[0, 0, 0.1]}
-        rotation={[0, 0, 0]}
+        rotation={[0,Math.PI/2,0]}
+        zIndexRange={[0]}
+        
       >
-        <div className="w-[400px] h-[250px] bg-black">
+        <div className="h-[520px] w-[1200px] bg-black">
           <iframe
             src={videoUrl}
-            width="400"
-            height="250"
+            width={'100%'}
+  
+            height={'100%'}
             className="border-none"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           />
         </div>
       </Html>
