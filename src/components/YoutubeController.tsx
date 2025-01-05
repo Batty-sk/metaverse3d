@@ -3,22 +3,23 @@ import React, { useState } from 'react'
 import YouTubePlayer from './YoutubePlayer'
 
 const YoutubeController = () => {
-    const [youtubeLink,updateYoutubeLink] = useState<string>('')
+
+    const handlePlayButton = ()=>{
+
+    }
   return (
     <>
-    <Html position={[0,5,0]}>
-            <div className='h-[200px] w-[500px] flex flex-col items-center justify-center bg-black'>
-                <h1 className='text-white font-mono'>Youtube Link</h1>
+    <Html position={[-5, 1, Math.PI+0.01]} transform distanceFactor={1.5} zIndexRange={[0]} occlude>
+            <div className='h-[530px] w-[1200px] flex flex-col items-center justify-center bg-black'>
+                <h1 className='text-white font-mono text-5xl'>Youtube Link</h1>
                 <div className='flex items-center'>
-                <input type="text" name="" id="" className='mt-2 font-mono' placeholder='Youtube link' />
-                <button className='bg-red-600 px-2 rounded-sm font-mono text-white'>Play</button>
+                  <div className='flex justify-center items-center'>
+                <input type="text" name="youtube-link" id="youtube-link" className=' font-mono h-12 w-64' placeholder='Youtube link' />
+                <button className='bg-red-600 px-2 py-3 rounded-sm font-mono text-white'>Play</button>
                 </div>
-                <div className='w-2/4 flex mt-2'>
-                    <span className='me-2 text-white text-sm font-mono'>Playing:</span>
-                    {/*@ts-ignore */}
-                    <marquee behavior="" direction="" className="text-white">Bru</marquee>
                 </div>
-            </div>
+      
+            </div> 
     </Html>
     <YouTubePlayer />
     </>

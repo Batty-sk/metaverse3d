@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
-import { Mesh } from "three";
+import { Mesh, Vector3 } from "three";
 
 type playerProps = {
   playerRef: React.RefObject<Mesh>;
@@ -30,7 +30,7 @@ const MyPlayer = ({ playerRef }: playerProps) => {
 
     const handleKeyUp = (e: KeyboardEvent) => {
       activeKeys.current.delete(e.key);
-    };
+    }
 
     const updatePlayerPosition = () => {
       if (playerRef.current) {
@@ -38,22 +38,23 @@ const MyPlayer = ({ playerRef }: playerProps) => {
         let moved = false;
 
         // Update player movement in X and Z directions
-        if (activeKeys.current.has("ArrowUp")) {
+        if (activeKeys.current.has("ArrowUp") && position.z-0.05 > -12.5) {
           position.z -= 0.05;
-          playerRef.current.rotation.x -= 0.05; // Rolling animation
+          playerRef.current.rotation.x -= 0.05; 
           moved = true;
         }
-        if (activeKeys.current.has("ArrowDown")) {
+        if (activeKeys.current.has("ArrowDown") && position.z+0.05 < 12.5) {
           position.z += 0.05;
           playerRef.current.rotation.x += 0.05;
           moved = true;
         }
-        if (activeKeys.current.has("ArrowLeft")) {
+        if (activeKeys.current.has("ArrowLeft") && position.x-0.05 > -7.5) {
+
           position.x -= 0.05;
           playerRef.current.rotation.z += 0.05;
           moved = true;
         }
-        if (activeKeys.current.has("ArrowRight")) {
+        if (activeKeys.current.has("ArrowRight") && position.x+0.05 < 7.5) {
           position.x += 0.05;
           playerRef.current.rotation.z -= 0.05;
           moved = true;
@@ -88,7 +89,6 @@ const MyPlayer = ({ playerRef }: playerProps) => {
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keyup", handleKeyUp);
 
-    // Start animation frame
     animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
 
     return () => {
