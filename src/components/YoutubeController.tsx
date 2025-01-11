@@ -1,12 +1,7 @@
 import { Html } from '@react-three/drei'
-import React, { useState } from 'react'
 import YouTubePlayer from './YoutubePlayer'
 
 const YoutubeController = () => {
-
-    const handlePlayButton = ()=>{
-
-    }
   return (
     <>
     <Html position={[-5, 1, Math.PI+0.01]} transform distanceFactor={1.5} zIndexRange={[0]} occlude>

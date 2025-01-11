@@ -3,7 +3,7 @@ import {  Html } from "@react-three/drei";
 import { Mesh } from "three";
 
 const YouTubePlayer = () => {
-  const [videoUrl, setVideoUrl] = useState("https://www.youtube.com/embed/dQw4w9WgXcQ");
+  const [videoUrl, setVideoUrl] = useState("https://www.youtube.com/embed/htIuSWBnmok?si=JP3abY8bOs6Ki3qW");
   const meshRef = useRef<any>();
 
   const handleInputChange = (event:any) => {

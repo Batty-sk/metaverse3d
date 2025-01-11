@@ -13,15 +13,14 @@ const MyPlayer = ({ playerRef }: playerProps) => {
   const animationFrameId = useRef<number | null>(null);
   // Jump-related states
   const [isJumping, setIsJumping] = useState<boolean>(false);
-  const [velocity, setVelocity] = useState<number>(0); // Vertical velocity for jump
-  const gravity = -0.005; // Gravity strength
-  const jumpStrength = 0.05; // Initial jump strength
+  const [velocity, setVelocity] = useState<number>(0); 
+  const gravity = -0.005; 
+  const jumpStrength = 0.05; 
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       activeKeys.current.add(e.key);
 
-      // Jump logic for spacebar
       if (e.key === " " && !isJumping) {
         setIsJumping(true);
         setVelocity(jumpStrength);
@@ -37,7 +36,6 @@ const MyPlayer = ({ playerRef }: playerProps) => {
         const position = playerRef.current.position;
         let moved = false;
 
-        // Update player movement in X and Z directions
         if (activeKeys.current.has("ArrowUp") && position.z-0.05 > -12.5) {
           position.z -= 0.05;
           playerRef.current.rotation.x -= 0.05; 
@@ -60,7 +58,6 @@ const MyPlayer = ({ playerRef }: playerProps) => {
           moved = true;
         }
 
-        // Handle jumping physics (gravity + jump)
         if (isJumping) {
           position.y += velocity; // A
 
@@ -74,7 +71,6 @@ const MyPlayer = ({ playerRef }: playerProps) => {
         }
 
         if (moved) {
-          // Emit updated position to server
           socket?.emit("send-coordinates", {
             x: position.x,
             y: position.y,
