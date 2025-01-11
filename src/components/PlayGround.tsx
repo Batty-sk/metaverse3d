@@ -14,8 +14,6 @@ import ChatArea from "./ChatArea";
 import YRoad from "./YRoad";
 import { pavingStoneTexture } from "../assets/textures";
 import StreetLamp from "./models/StreetLamp";
-import YouTubeLogo from "./YoutubeLogo";
-import YouTubePlayer from "./YoutubePlayer";
 
 type canvasSizeProp = {
   width: number;
@@ -29,6 +27,10 @@ const PlayGround = () => {
   //getting the media variables from the sockets context
   //const [somethingChanges, setSomethingChanges] = useState<boolean>(false);
   const playersRef = useRef<Map<string, Mesh | null>>(new Map());
+  //camera ref.
+  const cameraRef = useRef<any>();
+
+
   const playersMaterialRef = useRef<Map<string, MeshStandardMaterial | null>>(
     new Map()
   );
@@ -74,15 +76,11 @@ const PlayGround = () => {
         height: window.innerHeight,
       });
     };
+    handleUpdateSize();
     window.addEventListener("resize", handleUpdateSize);
     return () => window.removeEventListener("resize", handleUpdateSize);
   }, []);
-  useEffect(()=>{
-    updateCanvasSize({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    })
-  },[])
+
 
   interface coordinates {
     socketId: string;
@@ -154,10 +152,10 @@ const PlayGround = () => {
       >
 
         <YRoad />
-        <CustomPerspectiveCamera playerRef={myPlayerRef} />
+        <CustomPerspectiveCamera  cameraRef={cameraRef} playerRef={myPlayerRef} />
         {/*       <ambientLight/>
          */}{" "}
-        <MyPlayer playerRef={myPlayerRef} />
+        <MyPlayer playerRef={myPlayerRef} cameraRef={cameraRef} />
         {peersState.map(
           (args,index) => (
             <Players

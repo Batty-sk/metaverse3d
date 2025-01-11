@@ -4,7 +4,7 @@ import { Mesh } from "three";
 
 const YouTubePlayer = () => {
   const [videoUrl, setVideoUrl] = useState("https://www.youtube.com/embed/htIuSWBnmok?si=JP3abY8bOs6Ki3qW");
-  const meshRef = useRef<any>();
+  const meshRef = useRef<Mesh>(null);
 
   const handleInputChange = (event:any) => {
     const url = event.target.value;
