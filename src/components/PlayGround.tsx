@@ -160,7 +160,7 @@ const PlayGround = () => {
           (args,index) => (
             <Players
               key={args.peerId}
-              Player_name={args.peerId}
+              Player_name={args.peerName}
               Player_color="blue"
               startingPostition={args.position}
               PlayerRef={(el) => playersRef.current.set(args.peerId, el)}

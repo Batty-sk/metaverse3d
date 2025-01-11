@@ -47,16 +47,19 @@ export const SocketContext = createContext<
 });
 
 type socketContextWrapperProps = {
-  children: ReactNode;
+  children: ReactNode,
+  userName:string
 };
 
 interface peersState{
   peerId:string,
+  peerName:string
   position:[number,number,number]
 }
 
 export const SocketContextWrapper = ({
   children,
+  userName
 }: socketContextWrapperProps) => {
   const [socket, updateSocket] = useState<Socket | null>(null);
   const localStream = useRef<MediaStream>();
@@ -158,14 +161,14 @@ export const SocketContextWrapper = ({
     connection.on("open", () => {
       console.log("Connection opened with peer", connection.peer);
       peers.current.set(connection.peer, connection);
-      connection.send("Hi, I'm your new friend!");
+      connection.send(userName)
+
     });
 
     connection.on("data", (data) => {
       console.log("Received data from peer:", data);
-      const position = data as [x:number,y:number,z:number]
-      updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,position:position}]);
-
+      const position = data as {name:string, position:[x:number,y:number,z:number]}
+      updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,peerName:position.name,position:position.position}]);
     });
     connection.on("close", () => {
       console.log("Connection closed with peer", connection.peer);
@@ -204,12 +207,18 @@ export const SocketContextWrapper = ({
       connectionToSomeone.on("open", () => {
         console.log("Connection established with peer ", peerID);
         peers.current.set(peerID, connectionToSomeone);
-        updatePeersState((prevArray) => [...prevArray,{peerId:peerID,position:[0,0.3,0]}]);
         console.log('sending my coordinates to the new joiny',myPlayerRef.current?.position)
-        connectionToSomeone.send(myPlayerRef.current?[...myPlayerRef.current.position]:[0,0.3,0]);
+        connectionToSomeone.send({
+          name :userName,
+          position:
+          myPlayerRef.current?[...myPlayerRef.current.position]:[0,0.3,0]});
       });
       connectionToSomeone.on("data", (data) => {
         console.log("Received data from peer:", data);
+        const playerName = data as string
+        console.log("new joiny recieving the player name",playerName)
+        updatePeersState((prevArray) => [...prevArray,{peerId:peerID,peerName:playerName,position:[0,0.3,0]}]);
+
       });
       connectionToSomeone.on("close", () => {
         console.log("Connection closed with peer", peerID);
