@@ -13,8 +13,6 @@ const NeonText = () => {
         Better Player
         <meshStandardMaterial emissive="yellow" emissiveIntensity={10} />
       </Text>
-
-      <ambientLight intensity={0.3} />
       <pointLight position={[10, 10, 10]} intensity={1} />
       <pointLight position={[-10, -10, 10]} intensity={0.5} />
     </>

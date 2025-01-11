@@ -203,7 +203,6 @@ export const SocketContextWrapper = ({
     if (connectionToSomeone) {
       connectionToSomeone.on("open", () => {
         console.log("Connection established with peer ", peerID);
-        // You can now start sending data or setting up media streams
         peers.current.set(peerID, connectionToSomeone);
         updatePeersState((prevArray) => [...prevArray,{peerId:peerID,position:[0,0.3,0]}]);
         console.log('sending my coordinates to the new joiny',myPlayerRef.current?.position)

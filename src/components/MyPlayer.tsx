@@ -45,22 +45,71 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
         right.crossVectors(forward, cameraRef.current.up).normalize();
 
         if (activeKeys.current.has("ArrowUp")) {
-          position.add(forward.clone().multiplyScalar(0.05));
-          moved = true;
+          const forward = new Vector3();
+          cameraRef.current.getWorldDirection(forward);
+          forward.y = 0; // Ignore vertical movement
+          forward.normalize();
+        
+          const newPosition = position.clone().add(forward.clone().multiplyScalar(0.05));
+        
+          // Out of bounds check for forward movement
+          if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
+            position.copy(newPosition);
+            playerRef.current.rotation.x -= 0.05;
+            moved = true;
+          }
         }
+        
         if (activeKeys.current.has("ArrowDown")) {
-          position.add(forward.clone().multiplyScalar(-0.05));
-          moved = true;
+          const backward = new Vector3();
+          cameraRef.current.getWorldDirection(backward);
+          backward.y = 0;
+          backward.normalize();
+        
+          const newPosition = position.clone().add(backward.clone().multiplyScalar(-0.05)); 
+        
+          if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
+            position.copy(newPosition);
+            playerRef.current.rotation.x += 0.05;
+            moved = true;
+          }
         }
+        
         if (activeKeys.current.has("ArrowLeft")) {
-          position.add(right.clone().multiplyScalar(-0.05));
-          moved = true;
+          const forward = new Vector3();
+          cameraRef.current.getWorldDirection(forward);
+          forward.y = 0;
+          forward.normalize();
+        
+          const right = new Vector3();
+          right.crossVectors(forward, cameraRef.current.up).normalize();
+        
+          const newPosition = position.clone().add(right.clone().multiplyScalar(-0.05)); 
+        
+          if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
+            position.copy(newPosition);
+            playerRef.current.rotation.z += 0.05;
+            moved = true;
+          }
         }
+        
         if (activeKeys.current.has("ArrowRight")) {
-          position.add(right.clone().multiplyScalar(0.05));
-          moved = true;
+          const forward = new Vector3();
+          cameraRef.current.getWorldDirection(forward);
+          forward.y = 0;
+          forward.normalize();
+        
+          const right = new Vector3();
+          right.crossVectors(forward, cameraRef.current.up).normalize();
+        
+          const newPosition = position.clone().add(right.clone().multiplyScalar(0.05)); 
+        
+          if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
+            position.copy(newPosition);
+            playerRef.current.rotation.z -= 0.05;
+            moved = true;
+          }
         }
-
         if (isJumping) {
           position.y += velocity;
           setVelocity((prevVelocity) => prevVelocity + gravity);

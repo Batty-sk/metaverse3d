@@ -31,7 +31,7 @@ const CustomPerspectiveCamera = ({ playerRef,cameraRef }: { playerRef: React.Ref
       if (cameraRef.current && playerRef.current) {
         const playerPosition = playerRef.current.position;
         cameraRef.current.position.x = playerPosition.x;
-        cameraRef.current.position.z = playerPosition.z + 0.5; // Adjust distance behind the player
+        cameraRef.current.position.z = playerPosition.z + 2; // Adjust distance behind the player
       }
     };
 
@@ -40,7 +40,7 @@ const CustomPerspectiveCamera = ({ playerRef,cameraRef }: { playerRef: React.Ref
     return () => clearInterval(interval);
   }, [playerRef]);
 
-  return <perspectiveCamera  ref={cameraRef} position={[0, 0.8, 2]} rotation={[0,0,0]}/>;
+  return <perspectiveCamera  ref={cameraRef} position={[0, 1, 2]} rotation={[0,0,0]}/>;
 };
 
 export default CustomPerspectiveCamera;
