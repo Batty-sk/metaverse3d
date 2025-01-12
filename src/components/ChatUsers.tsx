@@ -17,9 +17,10 @@ interface chatBarProps {
   handleMicMute: (peerId: string) => boolean;
   peerName:string
   updatePeerSelection:React.Dispatch<React.SetStateAction<{peerId:string,peerName:string} | false>>
+  bold:boolean
 }
 
-const ChatBar = ({ peerId, handleMicMute,peerName,updatePeerSelection }: chatBarProps) => {
+const ChatBar = ({ peerId, handleMicMute,peerName,updatePeerSelection,bold }: chatBarProps) => {
   const [muted, updateMuted] = useState(false);
   const handleMuteChange = () => {
     handleMicMute(peerId);
@@ -32,7 +33,7 @@ const ChatBar = ({ peerId, handleMicMute,peerName,updatePeerSelection }: chatBar
           updatePeerSelection({peerId:peerId,peerName:peerName})
         }}>
           <img src={user} height={35} width={35} alt="" />
-          <h5 className="font-mono">{peerName}</h5>
+          <h5 className={`font-mono ${bold && 'font-bold'}`}>{peerName}</h5>
         </div>
         <div className="flex">
           <span onClick={handleMuteChange} className="cursor-pointer">
@@ -58,7 +59,12 @@ const UserArea = ({ handleMessageSend,chats,peerId }: UserAreaProp) => {
   const [message, updateMessage] = useState<string>("");
   return (
     <>
-      <div className="md:h-3/5 h-2/5 bg-slate-50 m-2 rounded-md"></div>
+      <div className="md:h-3/5 h-2/5 bg-slate-50 m-2 flex flex-col items-end rounded-md
+      overflow-y-scroll">
+        {chats.map((x,i)=>{{
+          return <h4 key={i} className="bg-lime-300 m-2 w-fit rounded-md font-mono px-2 py-1">{x}</h4>
+        }})}
+      </div>
       <div className="flex justify-center items-center">
         <input
           type="text"
@@ -81,18 +87,25 @@ const UserArea = ({ handleMessageSend,chats,peerId }: UserAreaProp) => {
 };
 const ChatUsers = ({
 
-
-
   chats,
   chatNotifications,
   updateChatNotifications,
   
 }: chatUsersProps) => {
+  console.log("chats",chats,chatNotifications)
   const { peersState } = useContext(SocketContext);
   const [peerSelected, updatePeerSelected] = useState<{peerId:string,peerName:string} | false>(false);
     const { socket } = useContext(SocketContext);
-  
 
+useEffect(()=>{
+  if(!peerSelected)
+    return
+  if(chatNotifications.has(peerSelected.peerId))
+    updateChatNotifications((prevNotificatons) => {
+      const newNotification = new Map(prevNotificatons);
+      newNotification.set(peerSelected.peerId, 0);
+      return newNotification;
+    });},[peerSelected])
 
   const handleMicToggle = (peerId: string) => {
     return true;
@@ -103,7 +116,7 @@ const ChatUsers = ({
 
   const handleMessageSend = (message: string, to: string) => {
     console.log("sending the message",message,to)
-    socket?.send({message:message,to:to})
+    socket?.emit("send-message",{msg:message,to:to})
   };
 
   return (
@@ -115,6 +128,7 @@ const ChatUsers = ({
           peersState.map((x) => (
             <ChatBar
               key={x.peerId}
+              bold={chatNotifications.get(x.peerId)!>0?true:false}
               updatePeerSelection={updatePeerSelected}
               peerName={x.peerName}
               peerId={x.peerId}
@@ -134,7 +148,6 @@ const ChatUsers = ({
               X
             </span>
             </div>
-
             <UserArea
               handleMessageSend={handleMessageSend}
               chats={chats.get(peerSelected.peerId) || []}

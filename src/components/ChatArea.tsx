@@ -13,10 +13,10 @@ const NotificationComponent = ({ chatNotification }: { chatNotification: chatNot
   );
 
   return (
-    <div className="absolute bottom-0 right-0 rounded-full bg-red-500">
+    <div className="absolute bottom-0 right-0 rounded-full bg-red-500 ">
       {totalNotifications > 0 && (
         <div>
-          <p className="text-white">{totalNotifications}</p>
+          <p className="text-white text-sm px-2">{totalNotifications}</p>
         </div>
       )}
     </div>
@@ -25,7 +25,7 @@ const NotificationComponent = ({ chatNotification }: { chatNotification: chatNot
 
 interface chatMessage {
   from: string;
-  message: string;
+  msg: string;
 }
 
 export type Chat = Map<string, string[]>;
@@ -39,19 +39,22 @@ const ChatArea = () => {
   useState<chatNotification>(new Map());
   useEffect(() => {
     socket?.on("chat-messages", handleChatsMessages);
+    console.log("sockets are on for recieving the messages.");
     return () => {  
+      console.log("chat-messages listenenerrr fluseedd!");
       socket?.off("chat-messages", handleChatsMessages);
     };
   }, [socket]);
   const handleChatsMessages = (args: chatMessage) => {
+    console.log("chats were getting ....",args)
     updateChats((prevChats) => {
       const newChats = new Map(prevChats);
 
       if (newChats.has(args.from)) {
         const chat = newChats.get(args.from);
-        chat?.push(args.message);
+        chat?.push(args.msg);
       } else {
-        newChats.set(args.from, [args.message]);
+        newChats.set(args.from, [args.msg]);
       }
 
       return newChats;

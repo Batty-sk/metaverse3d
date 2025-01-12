@@ -15,7 +15,6 @@ const CustomPerspectiveCamera = ({ playerRef,cameraRef }: { playerRef: React.Ref
       const x = (e.clientX / innerWidth) * 2 - 1; 
 
       cameraRef.current.rotation.y += -x * 0.1; // Horizontal rotation
-      console.log("camera rotation from horizontally!",Math.cos(cameraRef.current.rotation.y));
     
     };
 
