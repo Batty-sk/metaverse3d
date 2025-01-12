@@ -4,9 +4,11 @@ import { SocketContext } from "../contexts/Socket";
 import { useContext } from "react";
 import ChatUsers from "./ChatUsers";
 
-
-
-const NotificationComponent = ({ chatNotification }: { chatNotification: chatNotification }) => {
+const NotificationComponent = ({
+  chatNotification,
+}: {
+  chatNotification: chatNotification;
+}) => {
   const totalNotifications = Array.from(chatNotification.values()).reduce(
     (sum, value) => sum + value,
     0
@@ -27,8 +29,11 @@ interface chatMessage {
   from: string;
   msg: string;
 }
-
-export type Chat = Map<string, string[]>;
+export interface whosChat {
+  me: string;
+  user: string;
+}
+export type Chat = Map<string, whosChat[]>;
 export type chatNotification = Map<string, number>;
 
 const ChatArea = () => {
@@ -36,29 +41,31 @@ const ChatArea = () => {
   const [chatOpen, updateChatOpen] = useState<boolean>(false);
   const [chats, updateChats] = useState<Chat>(new Map());
   const [chatNotification, updateChatNotifications] =
-  useState<chatNotification>(new Map());
+    useState<chatNotification>(new Map());
   useEffect(() => {
     socket?.on("chat-messages", handleChatsMessages);
     console.log("sockets are on for recieving the messages.");
-    return () => {  
+    return () => {
       console.log("chat-messages listenenerrr fluseedd!");
       socket?.off("chat-messages", handleChatsMessages);
     };
   }, [socket]);
   const handleChatsMessages = (args: chatMessage) => {
-    console.log("chats were getting ....",args)
+    console.log("chats were getting ....", args);
     updateChats((prevChats) => {
       const newChats = new Map(prevChats);
 
       if (newChats.has(args.from)) {
         const chat = newChats.get(args.from);
-        chat?.push(args.msg);
+        chat?.push({ user: args.msg, me: "" });
       } else {
-        newChats.set(args.from, [args.msg]);
+        newChats.set(args.from, [{ user: args.msg, me: "" }]);
       }
 
       return newChats;
     });
+    if(chatOpen)
+      return
     updateChatNotifications((prevNotificatons) => {
       const newNotification = new Map(prevNotificatons);
       if (newNotification.has(args.from)) {
@@ -87,16 +94,29 @@ const ChatArea = () => {
   return (
     <div className="min-h-96 h-96 min-w-96 w-4/12 bg-[#efebce] rounded-sm m-2">
       <div className="flex justify-center p-2">
-        <h1 className="text-3xl font-mono w-full text-black text-center flex justify-center font-bold">Global <img src={globeIcon} className="animate ms-2" height={35} width={35} /> </h1>
-          <span
-            className="text-2xl font-bold mx-2 text-red-600 cursor-pointer"
-            onClick={() => updateChatOpen(false)}
-          >
+        <h1 className="text-3xl font-mono w-full text-black text-center flex justify-center font-bold">
+          Global{" "}
+          <img
+            src={globeIcon}
+            className="animate ms-2"
+            height={35}
+            width={35}
+          />{" "}
+        </h1>
+        <span
+          className="text-2xl font-bold mx-2 text-red-600 cursor-pointer"
+          onClick={() => updateChatOpen(false)}
+        >
           X
         </span>
-      </div> 
+      </div>
       <div className="h-full px-2">
-        <ChatUsers chatNotifications={chatNotification} chats={chats} updateChatNotifications={updateChatNotifications}/>
+        <ChatUsers
+          chatNotifications={chatNotification}
+          updateChats={updateChats}
+          chats={chats}
+          updateChatNotifications={updateChatNotifications}
+        />
       </div>
     </div>
   );

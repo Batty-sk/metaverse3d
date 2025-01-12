@@ -3,6 +3,7 @@ import { chatNotification, Chat } from "./ChatArea";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
 import { muteIcon, notMutedIcon, user, send } from "../assets";
+import { whosChat } from "./ChatArea";
 
 interface chatUsersProps {
   chats: Chat;
@@ -10,6 +11,7 @@ interface chatUsersProps {
   updateChatNotifications: React.Dispatch<
     React.SetStateAction<chatNotification>
   >;
+ updateChats:React.Dispatch<React.SetStateAction<Chat>>
 }
 
 interface chatBarProps {
@@ -33,7 +35,7 @@ const ChatBar = ({ peerId, handleMicMute,peerName,updatePeerSelection,bold }: ch
           updatePeerSelection({peerId:peerId,peerName:peerName})
         }}>
           <img src={user} height={35} width={35} alt="" />
-          <h5 className={`font-mono ${bold && 'font-bold'}`}>{peerName}</h5>
+          <h5 className={`font-mono ${bold && 'underline underline-offset-1'}`}>{peerName}</h5>
         </div>
         <div className="flex">
           <span onClick={handleMuteChange} className="cursor-pointer">
@@ -52,7 +54,7 @@ const ChatBar = ({ peerId, handleMicMute,peerName,updatePeerSelection,bold }: ch
 };
 type UserAreaProp = {
   handleMessageSend: (message: string, to: string) => void;
-  chats: string[];
+  chats: whosChat[];
   peerId: string;
 };
 const UserArea = ({ handleMessageSend,chats,peerId }: UserAreaProp) => {
@@ -62,7 +64,11 @@ const UserArea = ({ handleMessageSend,chats,peerId }: UserAreaProp) => {
       <div className="md:h-3/5 h-2/5 bg-slate-50 m-2 flex flex-col items-end rounded-md
       overflow-y-scroll">
         {chats.map((x,i)=>{{
-          return <h4 key={i} className="bg-lime-300 m-2 w-fit rounded-md font-mono px-2 py-1">{x}</h4>
+          return <div key={i}>
+         {x.user && <h4  className="bg-lime-300 m-2 w-fit rounded-md font-mono px-2 py-1">{x.user}</h4>}
+          {x.me && <h4 key={i} className="bg-slate-300 m-2 w-fit rounded-md font-mono px-2 py-1">{x.me}</h4>
+ }
+          </div>
         }})}
       </div>
       <div className="flex justify-center items-center">
@@ -89,6 +95,7 @@ const ChatUsers = ({
 
   chats,
   chatNotifications,
+  updateChats,
   updateChatNotifications,
   
 }: chatUsersProps) => {
@@ -117,6 +124,16 @@ useEffect(()=>{
   const handleMessageSend = (message: string, to: string) => {
     console.log("sending the message",message,to)
     socket?.emit("send-message",{msg:message,to:to})
+    updateChats((prevChats) => {
+      const newChats = new Map(prevChats);
+      if (newChats.has(to)) {
+        const chat = newChats.get(to);
+        chat?.push({ user: "", me: message });
+      } else {
+        newChats.set(to, [{ user: "", me: message }]);
+      }
+      return newChats;
+    });
   };
 
   return (
