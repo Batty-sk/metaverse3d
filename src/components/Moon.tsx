@@ -9,12 +9,12 @@ const Moon: React.FC = () => {
   ]);
 
   return (
-    <mesh position={[5,5,-15]}>
+    <mesh position={[5,7,-10]}>
       <sphereGeometry args={[1, 64, 64]} />
       <meshStandardMaterial
         map={colorMap}
         roughness={0.9}
-        emissive={new THREE.Color('#FFD700')} // Yellowish glow
+        emissive={new THREE.Color('gray')} // Yellowish glow
       />
     </mesh>
   );

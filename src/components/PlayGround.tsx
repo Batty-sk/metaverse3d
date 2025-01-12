@@ -1,6 +1,6 @@
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import React, { useEffect, useRef, useState } from "react";
-import { Color, Mesh, MeshStandardMaterial, TextureLoader } from "three";
+import { Color, Mesh, MeshStandardMaterial, TextureLoader, Vector3 } from "three";
 import { useContext } from "react";
 
 import CustomPerspectiveCamera from "./CustomPerspectiveCamera";
@@ -26,8 +26,15 @@ const PlayGround = () => {
     useContext(SocketContext);
   //getting the media variables from the sockets context
   //const [somethingChanges, setSomethingChanges] = useState<boolean>(false);
-  const playersRef = useRef<Map<string, Mesh | null>>(new Map());
-  //camera ref.
+  type InterpolatedMesh = Mesh & {
+    interpolation?: {
+      startPosition: Vector3;
+      endPosition: Vector3;
+      progress: number;
+    };
+  };
+  
+  const playersRef = useRef<Map<string, InterpolatedMesh | null>>(new Map());  //camera ref.
   const cameraRef = useRef<any>();
 
 
@@ -92,47 +99,76 @@ const PlayGround = () => {
   const handleSomeOneCoordinates = (args: coordinates) => {
     if (playersRef.current.has(args.socketId)) {
       const playerRef = playersRef.current.get(args.socketId);
+  
       let Media = null;
+  
       if (!playersMedia?.current.has(args.socketId)) {
-        console.log(
-          "This player doesn't assosicated with the media ! revertting the distance calculations"
-        );
+        console.log("This player doesn't associate with the media! Reverting the distance calculations.");
         return;
       }
+  
       Media = playersMedia.current.get(args.socketId);
-
+  
       if (playerRef) {
-        playerRef.position.x = args.x;
-        playerRef.position.y = args.y;
-        playerRef.position.z = args.z;
+        // Initialize interpolation data if not present
+        if (!playerRef.interpolation) {
+          playerRef.interpolation = {
+            startPosition: playerRef.position.clone(), //will gives the starting position.
+            endPosition: new Vector3(args.x, args.y, args.z), // the ending position where this player needs to be go.
+            progress: 0,
+          };
+        } else {
+          playerRef.interpolation.startPosition.copy(playerRef.position);
+          playerRef.interpolation.endPosition.set(args.x, args.y, args.z);
+          playerRef.interpolation.progress = 0;
+        }
+  
+        // Smooth position update using interpolation
+        const smoothMove = () => {
+          if (playerRef && playerRef.interpolation) {
+            playerRef.interpolation.progress += 0.05; // Adjust for smoothness
+  
+            if (playerRef.interpolation.progress > 1) {
+              playerRef.interpolation.progress = 1;
+            }
+  
+            // Lerp (Linear Interpolation)
+            playerRef.position.lerpVectors(
+              playerRef.interpolation.startPosition,
+              playerRef.interpolation.endPosition,
+              playerRef.interpolation.progress
+            );
+  
+            if (playerRef.interpolation.progress < 1) {
+              requestAnimationFrame(smoothMove);
+            }
+          }
+        };
+  
+        smoothMove(); // Start smooth movement
+  
+        // Handle Media (Audio) based on distance
         if (
           calculateDistance({
-            userX: playerRef?.position.x,
-            userZ: playerRef?.position.z,
+            userX: playerRef.position.x,
+            userZ: playerRef.position.z,
             currentPlayerX: myPlayerRef.current!.position.x,
             currentPlayerZ: myPlayerRef.current!.position.z,
           })
         ) {
           console.log("players' media object", Media);
           Media!.muted = false;
-          // we need to add the volume.
-          if (playersMaterialRef.current.has(args.socketId)) {
-            console.log("player volume", Media?.volume);
-            const player = playersMaterialRef.current.get(args.socketId);
-            console.log("setting up the color..");
-            player!.color = new Color("blue");
-          }
+  
           Media?.play().catch((err) => {
-            console.log("some error while playing the remote stream.");
+            console.log("Error playing the remote stream.");
           });
         } else {
           Media!.muted = true;
-          console.log("he is too far to be calcuaated ....");
+          console.log("Player is too far...");
         }
       }
     }
   };
-  /* window.requestAnimationFrame */
   console.log("canvas size ", canvassize);
 
   // this playground would have lot of players in it..
@@ -150,7 +186,7 @@ const PlayGround = () => {
           // Dark blue gradient
         }}
       >
-
+        <ambientLight intensity={0.5}/>
         <YRoad />
         <CustomPerspectiveCamera  cameraRef={cameraRef} playerRef={myPlayerRef} />
         {/*       <ambientLight/>

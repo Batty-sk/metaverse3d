@@ -36,10 +36,10 @@ const ChatArea = () => {
   const [chatOpen, updateChatOpen] = useState<boolean>(false);
   const [chats, updateChats] = useState<Chat>(new Map());
   const [chatNotification, updateChatNotifications] =
-    useState<chatNotification>(new Map());
+  useState<chatNotification>(new Map());
   useEffect(() => {
     socket?.on("chat-messages", handleChatsMessages);
-    return () => {
+    return () => {  
       socket?.off("chat-messages", handleChatsMessages);
     };
   }, [socket]);

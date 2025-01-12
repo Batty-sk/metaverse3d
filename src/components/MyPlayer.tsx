@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
-import { Mesh, Vector3 } from "three";
+import { Mesh, TextureLoader, Vector3 } from "three";
+import { playerTexture, woodBaseTexture } from "../assets/textures";
+import { useLoader } from "@react-three/fiber";
 
 type playerProps = {
   playerRef: React.RefObject<Mesh>;
@@ -16,7 +18,12 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
   const [velocity, setVelocity] = useState<number>(0);
   const gravity = -0.005;
   const jumpStrength = 0.05;
+  const throttleInterval = 100;
+  const lastSentTime = useRef<number>(0);
 
+ const [woodTexture] = useLoader(TextureLoader, [
+        woodBaseTexture
+      ]);
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       activeKeys.current.add(e.key);
@@ -120,13 +127,13 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
           }
         }
 
-        if (moved) {
-          socket?.emit("send-coordinates", {
-            x: position.x,
-            y: position.y,
-            z: position.z,
-          });
+        const now = Date.now();
+        if (moved && now - lastSentTime.current >= throttleInterval) {
+          socket?.emit("send-coordinates", { x: position.x, y: position.y, z: position.z });
+          lastSentTime.current = now;
         }
+      
+
       }
 
       animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
@@ -150,7 +157,7 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
   return (
     <mesh position={[0, 0.3, 1]} ref={playerRef} scale={[1, 1, 1]}>
       <sphereGeometry args={[0.2, 32, 32]} />
-      <meshStandardMaterial color={"white"} />
+      <meshStandardMaterial map={woodTexture} roughness={1} />
     </mesh>
   );
 };
