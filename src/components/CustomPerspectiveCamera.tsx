@@ -13,7 +13,8 @@ const CustomPerspectiveCamera = ({ playerRef,cameraRef }: { playerRef: React.Ref
       if (!cameraRef.current) return;
       const { innerWidth, innerHeight } = window;
       const x = (e.clientX / innerWidth) * 2 - 1; 
-
+      const y = (e.clientY/innerHeight) *2-1;
+      cameraRef.current.rotation.x = -y * 0.1;
       cameraRef.current.rotation.y += -x * 0.05; // Horizontal rotation
     
     };

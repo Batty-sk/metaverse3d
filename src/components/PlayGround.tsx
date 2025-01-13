@@ -43,7 +43,7 @@ const PlayGround = () => {
   );
 
   const [canvassize, updateCanvasSize] = useState<canvasSizeProp>({
-    width: window.innerWidth,
+    width: window.innerWidth-10,
     height: window.innerHeight,
   });
 
@@ -78,13 +78,14 @@ const PlayGround = () => {
   }, [peersState]);
   useEffect(() => {
     const handleUpdateSize = () => {
+      console.log("updating.. the size")
       updateCanvasSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     };
-    handleUpdateSize();
     window.addEventListener("resize", handleUpdateSize);
+    setTimeout(()=>handleUpdateSize(),100);
     return () => window.removeEventListener("resize", handleUpdateSize);
   }, []);
 
@@ -169,7 +170,7 @@ const PlayGround = () => {
 
   // this playground would have lot of players in it..
   return (
-    <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
       <div style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}>
         <ChatArea />
       </div>
@@ -177,9 +178,8 @@ const PlayGround = () => {
         className=""
         style={{
           width: canvassize.width,
-          height: `${canvassize.height}px`,
+          height: canvassize.height,
           background: "linear-gradient(180deg, #000000, #0a2a43, #1a4465)", // Deep black to dark blue
-          // Dark blue gradient
         }}
       >
         <ambientLight intensity={0.5}/>
