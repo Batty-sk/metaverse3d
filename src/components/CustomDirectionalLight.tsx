@@ -21,6 +21,7 @@ function CustomeDirectionalLight() {
         rotation={[0,0.9,0]}
         intensity={1}
         castShadow={true}
+        
       />
     </>
   );

@@ -101,13 +101,11 @@ const PlayGround = () => {
       const playerRef = playersRef.current.get(args.socketId);
   
       let Media = null;
+      let Mutes =false;
+
   
-      if (!playersMedia?.current.has(args.socketId)) {
-        console.log("This player doesn't associate with the media! Reverting the distance calculations.");
-        return;
-      }
-  
-      Media = playersMedia.current.get(args.socketId);
+      Media = playersMedia?.current.get(args.socketId)?.audio;
+      Mutes = playersMedia?.current.get(args.socketId)?.mutes || false;
   
       if (playerRef) {
         // Initialize interpolation data if not present
@@ -123,16 +121,13 @@ const PlayGround = () => {
           playerRef.interpolation.progress = 0;
         }
   
-        // Smooth position update using interpolation
         const smoothMove = () => {
           if (playerRef && playerRef.interpolation) {
-            playerRef.interpolation.progress += 0.05; // Adjust for smoothness
-  
+            playerRef.interpolation.progress += 0.05; 
             if (playerRef.interpolation.progress > 1) {
               playerRef.interpolation.progress = 1;
             }
   
-            // Lerp (Linear Interpolation)
             playerRef.position.lerpVectors(
               playerRef.interpolation.startPosition,
               playerRef.interpolation.endPosition,
@@ -145,7 +140,7 @@ const PlayGround = () => {
           }
         };
   
-        smoothMove(); // Start smooth movement
+        smoothMove(); 
   
         // Handle Media (Audio) based on distance
         if (
@@ -155,6 +150,7 @@ const PlayGround = () => {
             currentPlayerX: myPlayerRef.current!.position.x,
             currentPlayerZ: myPlayerRef.current!.position.z,
           })
+          && !Mutes
         ) {
           console.log("players' media object", Media);
           Media!.muted = false;

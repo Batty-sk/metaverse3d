@@ -21,7 +21,7 @@ const App = () => {
   return (
     <>
     {!eligible?
-    <div className="h-svh bg-black flex items-center justify-center">
+    <div className="h-svh  bg-zinc-950 flex items-center justify-center">
       <div className="flex flex-col justify-center items-center">
         <h1 className="text-white md:text-3xl text-5xl font-extrabold space-x-5 mb-3">Meta Chat <span className="animate animate-spin duration-200">🌍</span></h1>
         <h3 className="text-white font-light text-sm font-mono ">Connect with anyone, anytime</h3>

@@ -26,7 +26,7 @@ type socketContextProps<P, M> = {
   socket: Socket | null;
   socketId: string;
   noOfPlayers: number;
-  playersMedia: React.MutableRefObject<Map<string, HTMLAudioElement>>|undefined;
+  playersMedia: React.MutableRefObject<Map<string, {audio:HTMLAudioElement,mutes:boolean}>>|undefined;
   myPlayerRef:React.RefObject<Mesh>;
   peersState: peersState[];
   fetchCurrentUsersInTheLobby: () => void;
@@ -67,7 +67,7 @@ export const SocketContextWrapper = ({
   const [error,updateError] = useState<string>("")
   const peers = useRef<Map<string, DataConnection>>(new Map()); 
   const [peersState,updatePeersState] = useState<peersState[]>([]) //creating a new state variable which will holds the current players in the lobby.
-  const peersMedia = useRef<Map<string, HTMLAudioElement>>(new Map());
+  const peersMedia = useRef<Map<string, {audio:HTMLAudioElement,mutes:boolean}>>(new Map());
   const myPeer = useRef<Peer>();
 
   useEffect(() => {
@@ -193,7 +193,7 @@ export const SocketContextWrapper = ({
     }
     const audio = new Audio();
     audio.srcObject = remoteStream;
-    peersMedia.current.set(peerId, audio);
+    peersMedia.current.set(peerId, {audio:audio,mutes:false});
     
     /*     audio
       .play()
@@ -252,8 +252,8 @@ export const SocketContextWrapper = ({
   const handleMessageRequest = () => {};
   return (
     <>
-    {error?<div className="h-svh w-full flex items-center justify-center">
-        <h1 className="font-extrabold text-5xl -rotate-3">Error:{error}</h1>
+    {error?<div className="h-svh w-full flex items-center justify-center bg-zinc-900">
+        <h1 className="font-extrabold text-5xl -rotate-3 text-white">Error:{error}</h1>
     </div>:
       <SocketContext.Provider
       value={{

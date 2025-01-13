@@ -25,8 +25,9 @@ interface chatBarProps {
 const ChatBar = ({ peerId, handleMicMute,peerName,updatePeerSelection,bold }: chatBarProps) => {
   const [muted, updateMuted] = useState(false);
   const handleMuteChange = () => {
-    handleMicMute(peerId);
-    updateMuted(!muted);
+    if(handleMicMute(peerId))
+        updateMuted(!muted);
+    
   };
   return (
     <div className="w-full  bg-[#d6ce93] p-3">
@@ -100,11 +101,10 @@ const ChatUsers = ({
   
 }: chatUsersProps) => {
   console.log("chats",chats,chatNotifications)
-  const { peersState } = useContext(SocketContext);
+  const { peersState,socket,playersMedia } = useContext(SocketContext);
   const [peerSelected, updatePeerSelected] = useState<{peerId:string,peerName:string} | false>(false);
-    const { socket } = useContext(SocketContext);
 
-useEffect(()=>{
+useEffect(()=>{ 
   if(!peerSelected)
     return
   if(chatNotifications.has(peerSelected.peerId))
@@ -115,7 +115,13 @@ useEffect(()=>{
     });},[peerSelected])
 
   const handleMicToggle = (peerId: string) => {
-    return true;
+    if (playersMedia?.current.has(peerId)){
+      let playerMic = playersMedia.current.get(peerId)
+      playerMic!.mutes = !playerMic!.mutes
+      console.log("muutting the peer id ",peerId,playersMedia.current.get(peerId));
+      return true
+    }
+    return false;
   };
   const handleUserChatClose = () => {
     updatePeerSelected(false);
