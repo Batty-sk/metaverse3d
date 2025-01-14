@@ -143,7 +143,6 @@ const PlayGround = () => {
   
         smoothMove(); 
   
-        // Handle Media (Audio) based on distance
         if (
           calculateDistance({
             userX: playerRef.position.x,

@@ -1,6 +1,7 @@
 import { startTransition, useState } from "react";
-import { PlayGround } from "./components";
+import { PlayGround,MetaChat3D } from "./components";
 import { SocketContextWrapper } from './contexts/Socket.tsx'
+import ColorSelectionWindowj from "./components/ColorSelectionWindowj.tsx";
 
 
 const App = () => {
@@ -21,13 +22,13 @@ const App = () => {
   return (
     <>
     {!eligible?
-    <div className="h-svh  bg-zinc-950 flex items-center justify-center">
-      <div className="flex flex-col justify-center items-center">
-        <h1 className="text-white md:text-3xl text-5xl font-extrabold space-x-5 mb-3">Meta Chat <span className="animate animate-spin duration-200">🌍</span></h1>
+      <div className="h-svh flex items-center justify-center" style={{ background: "linear-gradient(180deg, #000000, #0a2a43, #1a4465)"}}>
+      <div className="flex flex-col justify-center items-center w-5/6">
+        <MetaChat3D />
         <h3 className="text-white font-light text-sm font-mono ">Connect with anyone, anytime</h3>
-
-        <div className="flex justify-center mt-5">
-          <input  onChange={(e)=>updateUserName(e.target.value)} type="text" name="" id=""  className="rounded-md h-10 font-mono" placeholder="Enter your name.."/><button className="font-mono text-indigo-200 text-3xl font-extrabold ms-5 -rotate-6" 
+        <ColorSelectionWindowj />
+        <div className="flex justify-center mt-5 items-center">
+          <input  onChange={(e)=>updateUserName(e.target.value)} type="text" name="" id=""  className="rounded-md h-10 font-mono border border-black" placeholder="Enter your name.."/><button className="font-mono text-white md:text-5xl text-4xl font-extrabold ms-5 -rotate-6" 
           onClick={handleEnterIntoMetaverse}>Go!</button>
         </div>
         <div className="mt-3">
