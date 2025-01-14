@@ -14,6 +14,7 @@ import ChatArea from "./ChatArea";
 import YRoad from "./YRoad";
 import { pavingStoneTexture } from "../assets/textures";
 import StreetLamp from "./models/StreetLamp";
+import BushesAndTrees from "./BushesAndTrees";
 
 type canvasSizeProp = {
   width: number;
@@ -207,8 +208,8 @@ const PlayGround = () => {
           )
         )}
         <StreetLamp
-          positionLight={[0.5, 3.6, 0]}
-          position={[-1.1, -0.1, 0]}
+          positionLight={[0.5, 3.6, -5]}
+          position={[-1.1, -0.1, -5]}
           rotation={[0, 0, 0]}
         />
         <Club />
@@ -217,6 +218,7 @@ const PlayGround = () => {
           <meshStandardMaterial map={paveColorMap} side={2} />
         </mesh>
         <Moon />
+        <BushesAndTrees />
       </Canvas>
     </div>
   );
