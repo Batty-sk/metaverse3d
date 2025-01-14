@@ -10,7 +10,7 @@ type ColorSelectionProps ={
 
 const ColorSelectionWindowj = ({currentChoice,setCurrentChoice}:ColorSelectionProps) => {
     const cameraRef = useRef<any>();
-    const colors = ['yellow', 'brown', 'green'];
+    const colors = ['yellow', 'green', 'brown'];
     const positions = [
         [0, 0, 4], 
         [0, 0, 0],  
@@ -33,7 +33,7 @@ const ColorSelectionWindowj = ({currentChoice,setCurrentChoice}:ColorSelectionPr
     };
 
     return (
-        <div className='min-h-52 md:w-3/6 flex relative justify-between items-center'>
+        <div className='min-h-52 md:w-3/6 w-full flex relative justify-between items-center'>
             <div 
                 className='left-arrow  bg-black shadow-sm shadow-white text-white rounded-full  h-fit w-fit px-2 py-1 cursor-pointer'
                 onClick={() => handleLookAt(true)}

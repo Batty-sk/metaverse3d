@@ -8,7 +8,7 @@ const App = () => {
   const [userName,updateUserName] = useState<string>("")
   const [eligible,updateEligible] = useState<boolean>(false)
   const [message,updateMessage] = useState<string>("")
-  const [currentChoice, setCurrentChoice] = useState(0);
+  const [currentChoice, setCurrentChoice] = useState(1);
 
 
   const handleEnterIntoMetaverse =()=>{
@@ -24,7 +24,7 @@ const App = () => {
   return (
     <>
     {!eligible?
-      <div className="h-svh flex items-center justify-center" style={{ background: "linear-gradient(180deg, #000000, #0a2a43, #1a4465)"}}>
+      <div className="h-svh w-svw overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(180deg, #000000, #0a2a43, #1a4465)"}}>
       <div className="flex flex-col justify-center items-center w-5/6">
         <MetaChat3D />
         <h3 className="text-white font-light text-sm font-mono ">Connect with anyone, anytime</h3>

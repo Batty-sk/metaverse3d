@@ -60,7 +60,7 @@ interface peersState{
   peerName:string
   position:[number,number,number]
 }
-const colors = ['yellow', 'brown', 'green'];
+const colors = ['yellow', 'green', 'brown'];
   
 export const SocketContextWrapper = ({
   children,
@@ -259,8 +259,12 @@ export const SocketContextWrapper = ({
   const handleMessageRequest = () => {};
   return (
     <>
-    {error?<div className="h-svh w-full flex items-center justify-center bg-zinc-900">
-        <h1 className="font-extrabold text-5xl -rotate-3 text-white">Error:{error}</h1>
+    {error?<div className="h-svh w-full text-white flex flex-col items-center justify-center bg-zinc-900">
+        <h1 className="font-extrabold md:text-5xl text-2xl font-mono -rotate-3 text-white">Error:{error}</h1>
+        <p className="font-mono my-3">make sure you've given the mic permission!</p>
+        <p className="font-mono my-8 cursor-pointer underline" onClick={()=>window.location.reload()
+}>click here to refresh </p>
+
     </div>:
       <SocketContext.Provider
       value={{
