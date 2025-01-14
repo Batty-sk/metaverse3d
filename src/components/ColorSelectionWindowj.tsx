@@ -32,7 +32,7 @@ const ColorSelectionWindowj = () => {
     return (
         <div className='min-h-52 md:w-3/6 flex relative justify-between items-center'>
             <div 
-                className='left-arrow  bg-black text-white rounded-full  h-fit w-fit px-2 py-1 cursor-pointer'
+                className='left-arrow  bg-black shadow-sm shadow-white text-white rounded-full  h-fit w-fit px-2 py-1 cursor-pointer'
                 onClick={() => handleLookAt(true)}
             >
                 {'<'}
@@ -52,7 +52,7 @@ const ColorSelectionWindowj = () => {
                 </animated.group>
             </Canvas>
             <div 
-                className='right-arrow bg-black text-white rounded-full h-fit w-fit px-2 py-1 cursor-pointer'
+                className='right-arrow bg-black shadow-sm shadow-white text-white rounded-full h-fit w-fit px-2 py-1 cursor-pointer'
                 onClick={() => handleLookAt(false)}
             >
                 {'>'}
