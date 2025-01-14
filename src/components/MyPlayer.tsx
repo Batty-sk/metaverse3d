@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useContext } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
 import { Mesh, TextureLoader, Vector3 } from "three";
 import { playerTexture, woodBaseTexture } from "../assets/textures";
@@ -21,9 +20,12 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
   const throttleInterval = 100;
   const lastSentTime = useRef<number>(0);
 
- const [woodTexture] = useLoader(TextureLoader, [
-        woodBaseTexture
-      ]);
+  const [woodTexture] = useLoader(TextureLoader, [woodBaseTexture]);
+
+  // Handle Touch Inputs
+  const touchStartRef = useRef({ x: 0, y: 0 });
+  const touchMoveRef = useRef({ x: 0, y: 0 });
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       activeKeys.current.add(e.key);
@@ -36,6 +38,48 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
 
     const handleKeyUp = (e: KeyboardEvent) => {
       activeKeys.current.delete(e.key);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchMoveRef.current = { x: touch.clientX, y: touch.clientY };
+
+      const dx = touchMoveRef.current.x - touchStartRef.current.x;
+      const dy = touchMoveRef.current.y - touchStartRef.current.y;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 30) {
+          activeKeys.current.add("ArrowRight");
+          activeKeys.current.delete("ArrowLeft");
+        } else if (dx < -30) {
+          activeKeys.current.add("ArrowLeft");
+          activeKeys.current.delete("ArrowRight");
+        }
+      }
+
+      // Vertical swipe (up or down)
+      if (Math.abs(dy) > Math.abs(dx)) {
+        if (dy < -30) {
+          activeKeys.current.add("ArrowUp");
+          activeKeys.current.delete("ArrowDown");
+        } else if (dy > 30) {
+          activeKeys.current.add("ArrowDown");
+          activeKeys.current.delete("ArrowUp");
+        }
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      // Reset the keys when touch ends
+      activeKeys.current.delete("ArrowUp");
+      activeKeys.current.delete("ArrowDown");
+      activeKeys.current.delete("ArrowLeft");
+      activeKeys.current.delete("ArrowRight");
     };
 
     const updatePlayerPosition = () => {
@@ -52,71 +96,45 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
         right.crossVectors(forward, cameraRef.current.up).normalize();
 
         if (activeKeys.current.has("ArrowUp")) {
-          const forward = new Vector3();
-          cameraRef.current.getWorldDirection(forward);
-          forward.y = 0; // Ignore vertical movement
-          forward.normalize();
-        
           const newPosition = position.clone().add(forward.clone().multiplyScalar(0.05));
-        
-          // Out of bounds check for forward movement
           if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
             position.copy(newPosition);
             playerRef.current.rotation.x -= 0.05;
             moved = true;
           }
         }
-        
+
         if (activeKeys.current.has("ArrowDown")) {
           const backward = new Vector3();
           cameraRef.current.getWorldDirection(backward);
           backward.y = 0;
           backward.normalize();
-        
-          const newPosition = position.clone().add(backward.clone().multiplyScalar(-0.05)); 
-        
+          const newPosition = position.clone().add(backward.clone().multiplyScalar(-0.05));
           if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
             position.copy(newPosition);
             playerRef.current.rotation.x += 0.05;
             moved = true;
           }
         }
-        
+
         if (activeKeys.current.has("ArrowLeft")) {
-          const forward = new Vector3();
-          cameraRef.current.getWorldDirection(forward);
-          forward.y = 0;
-          forward.normalize();
-        
-          const right = new Vector3();
-          right.crossVectors(forward, cameraRef.current.up).normalize();
-        
-          const newPosition = position.clone().add(right.clone().multiplyScalar(-0.05)); 
-        
+          const newPosition = position.clone().add(right.clone().multiplyScalar(-0.05));
           if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
             position.copy(newPosition);
             playerRef.current.rotation.z += 0.05;
             moved = true;
           }
         }
-        
+
         if (activeKeys.current.has("ArrowRight")) {
-          const forward = new Vector3();
-          cameraRef.current.getWorldDirection(forward);
-          forward.y = 0;
-          forward.normalize();
-        
-          const right = new Vector3();
-          right.crossVectors(forward, cameraRef.current.up).normalize();
-        
-          const newPosition = position.clone().add(right.clone().multiplyScalar(0.05)); 
-        
+          const newPosition = position.clone().add(right.clone().multiplyScalar(0.05));
           if (newPosition.z > -12.5 && newPosition.z < 12.5 && newPosition.x > -7.5 && newPosition.x < 7.5) {
             position.copy(newPosition);
             playerRef.current.rotation.z -= 0.05;
             moved = true;
           }
         }
+
         if (isJumping) {
           position.y += velocity;
           setVelocity((prevVelocity) => prevVelocity + gravity);
@@ -132,8 +150,6 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
           socket?.emit("send-coordinates", { x: position.x, y: position.y, z: position.z });
           lastSentTime.current = now;
         }
-      
-
       }
 
       animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
@@ -141,12 +157,18 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
 
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("keyup", handleKeyUp);
+    document.addEventListener("touchstart", handleTouchStart, { passive: false });
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd);
 
     animationFrameId.current = requestAnimationFrame(updatePlayerPosition);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("keyup", handleKeyUp);
+      document.removeEventListener("touchstart", handleTouchStart);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
 
       if (animationFrameId.current !== null) {
         cancelAnimationFrame(animationFrameId.current);

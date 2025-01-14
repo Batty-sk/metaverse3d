@@ -26,7 +26,7 @@ type socketContextProps<P, M> = {
   socket: Socket | null;
   socketId: string;
   noOfPlayers: number;
-  playersMedia: React.MutableRefObject<Map<string, {audio:HTMLAudioElement,mutes:boolean}>>|undefined;
+  playersMedia: React.MutableRefObject<Map<string, {audio:HTMLAudioElement|null,mutes:boolean}>>|undefined;
   myPlayerRef:React.RefObject<Mesh>;
   peersState: peersState[];
   fetchCurrentUsersInTheLobby: () => void;
@@ -73,7 +73,7 @@ export const SocketContextWrapper = ({
   const [error,updateError] = useState<string>("")
   const peers = useRef<Map<string, DataConnection>>(new Map()); 
   const [peersState,updatePeersState] = useState<peersState[]>([]) //creating a new state variable which will holds the current players in the lobby.
-  const peersMedia = useRef<Map<string, {audio:HTMLAudioElement,mutes:boolean}>>(new Map());
+  const peersMedia = useRef<Map<string, {audio:HTMLAudioElement|null,mutes:boolean}>>(new Map());
   const myPeer = useRef<Peer>();
   const [color] = useState(colors[colorCode])
 
@@ -87,7 +87,7 @@ export const SocketContextWrapper = ({
           audio: true,
         });
       } catch (e) {
-        updateError("Please give microPhone access!")
+       /*  updateError("Please give microPhone access!") */
       }
     })();
   }, []);
@@ -195,11 +195,19 @@ export const SocketContextWrapper = ({
 
   const handleRemoteStream = (remoteStream: MediaStream, peerId: string) => {
     if (!remoteStream) {
+      peersMedia.current.set(peerId, {audio:null,mutes:false});
       return;
     }
     const audio = new Audio();
+    try{
     audio.srcObject = remoteStream;
     peersMedia.current.set(peerId, {audio:audio,mutes:false});
+
+    }
+    catch(err){
+      peersMedia.current.set(peerId, {audio:null,mutes:false});
+
+    }
     
     /*     audio
       .play()
@@ -252,7 +260,6 @@ export const SocketContextWrapper = ({
           peersMedia.current?.delete(peerID);
         });
 
-        // Store the peer connection
       }
     }
   };
@@ -260,8 +267,8 @@ export const SocketContextWrapper = ({
   return (
     <>
     {error?<div className="h-svh w-full text-white flex flex-col items-center justify-center bg-zinc-900">
-        <h1 className="font-extrabold md:text-5xl text-2xl font-mono -rotate-3 text-white">Error:{error}</h1>
-        <p className="font-mono my-3">make sure you've given the mic permission!</p>
+        <h1 className="font-extrabold md:text-5xl text-2xl font-mono -rotate-3 text-white pl-5">Error:{error}</h1>
+        <p className="font-mono my-3 pl-5">make sure you've given the mic permission!</p>
         <p className="font-mono my-8 cursor-pointer underline" onClick={()=>window.location.reload()
 }>click here to refresh </p>
 

@@ -82,8 +82,8 @@ const ChatArea = () => {
       <div className="relative">
         <img
           src={chatIcon}
-          height={80}
-          width={80}
+          height={150}
+          width={100}
           className="cursor-pointer"
           onClick={() => updateChatOpen(true)}
         />
@@ -92,7 +92,7 @@ const ChatArea = () => {
       </div>
     );
   return (
-    <div className="min-h-96 h-96 min-w-96 w-4/12 bg-[#efebce] rounded-sm m-2">
+    <div className="min-h-96 md:w-96 w-full bg-[#efebce] rounded-sm m-2">
       <div className="flex justify-center p-2">
         <h1 className="text-3xl font-mono w-full text-black text-center flex justify-center font-bold">
           Global{" "}

@@ -107,6 +107,7 @@ const PlayGround = () => {
   
       Media = playersMedia?.current.get(args.socketId)?.audio;
       Mutes = playersMedia?.current.get(args.socketId)?.mutes || false;
+
   
       if (playerRef) {
         // Initialize interpolation data if not present
@@ -142,7 +143,11 @@ const PlayGround = () => {
         };
   
         smoothMove(); 
-  
+        if(!Media)
+          {
+            console.log("player doesnt associated with any media!")
+            return;
+          }
         if (
           calculateDistance({
             userX: playerRef.position.x,
@@ -169,15 +174,15 @@ const PlayGround = () => {
 
   // this playground would have lot of players in it..
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+    <div style={{ position: "relative", width: canvassize.width, height:canvassize.height }}>
       <div style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}>
         <ChatArea />
       </div>
       <Canvas
         className=""
         style={{
-          width: canvassize.width,
-          height: canvassize.height,
+          width:"100%" ,
+          height: "100%",
           background: "linear-gradient(180deg, #000000, #0a2a43, #1a4465)", // Deep black to dark blue
         }}
       >
