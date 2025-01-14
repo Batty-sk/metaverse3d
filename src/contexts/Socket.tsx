@@ -31,6 +31,7 @@ type socketContextProps<P, M> = {
   peersState: peersState[];
   fetchCurrentUsersInTheLobby: () => void;
   messages: M[];
+  color:string
 };
 
 export const SocketContext = createContext<
@@ -44,22 +45,27 @@ export const SocketContext = createContext<
   messages: [],
   peersState:[],
   fetchCurrentUsersInTheLobby: () => "",
+  color:"",
 });
 
 type socketContextWrapperProps = {
   children: ReactNode,
   userName:string
+  colorCode:number
 };
 
 interface peersState{
   peerId:string,
+  color:string
   peerName:string
   position:[number,number,number]
 }
-
+const colors = ['yellow', 'brown', 'green'];
+  
 export const SocketContextWrapper = ({
   children,
-  userName
+  userName,
+  colorCode
 }: socketContextWrapperProps) => {
   const [socket, updateSocket] = useState<Socket | null>(null);
   const localStream = useRef<MediaStream>();
@@ -69,6 +75,7 @@ export const SocketContextWrapper = ({
   const [peersState,updatePeersState] = useState<peersState[]>([]) //creating a new state variable which will holds the current players in the lobby.
   const peersMedia = useRef<Map<string, {audio:HTMLAudioElement,mutes:boolean}>>(new Map());
   const myPeer = useRef<Peer>();
+  const [color] = useState(colors[colorCode])
 
   useEffect(() => {
     
@@ -162,20 +169,19 @@ export const SocketContextWrapper = ({
    updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== socketId));
 
   };
-
   const handleConnection = (connection: DataConnection) => {
     
     // when the new socket/player joins then we have to get all the player's coordinates who are
     // available in the lobby.
     connection.on("open", () => {
       peers.current.set(connection.peer, connection);
-      connection.send(userName)
+      connection.send({name:userName,color:colors[colorCode]})
 
     });
 
     connection.on("data", (data) => {
-      const position = data as {name:string, position:[x:number,y:number,z:number]}
-      updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,peerName:position.name,position:position.position}]);
+      const position = data as {name:string,color:string, position:[x:number,y:number,z:number]}
+      updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,peerName:position.name,color:position.color, position:position.position}]);
     });
     connection.on("close", () => {
       
@@ -211,15 +217,16 @@ export const SocketContextWrapper = ({
         peers.current.set(peerID, connectionToSomeone);
         
         connectionToSomeone.send({
+          color:colors[colorCode],
           name :userName,
           position:
           myPlayerRef.current?[...myPlayerRef.current.position]:[0,0.3,0]});
       });
       connectionToSomeone.on("data", (data) => {
         
-        const playerName = data as string
+        const playerName = data as {name:string,color:string}
         
-        updatePeersState((prevArray) => [...prevArray,{peerId:peerID,peerName:playerName,position:[0,0.3,0]}]);
+        updatePeersState((prevArray) => [...prevArray,{peerId:peerID,peerName:playerName.name,color:playerName.color,position:[0,0.3,0]}]);
 
       });
       connectionToSomeone.on("close", () => {
@@ -257,6 +264,7 @@ export const SocketContextWrapper = ({
     </div>:
       <SocketContext.Provider
       value={{
+        color:color,
         socket: socket,
         socketId: "",
         noOfPlayers: 0,

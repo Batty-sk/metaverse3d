@@ -28,7 +28,7 @@ const Players = (args: PlayersProps) => {
   {args.Player_name || "User"}
   </Text>
       <sphereGeometry args={[0.2, 32, 32]} />
-      <meshStandardMaterial ref={args.PlayerMaterialMesh} />
+      <meshStandardMaterial ref={args.PlayerMaterialMesh} color={args.Player_color} />
     </mesh>
     </group>
   );

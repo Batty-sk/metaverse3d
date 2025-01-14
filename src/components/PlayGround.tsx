@@ -192,7 +192,7 @@ const PlayGround = () => {
             <Players
               key={args.peerId}
               Player_name={args.peerName}
-              Player_color="blue"
+              Player_color={args.color}
               startingPostition={args.position}
               PlayerRef={(el) => playersRef.current.set(args.peerId, el)}
               PlayerMaterialMesh={(el) =>

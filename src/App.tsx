@@ -8,6 +8,8 @@ const App = () => {
   const [userName,updateUserName] = useState<string>("")
   const [eligible,updateEligible] = useState<boolean>(false)
   const [message,updateMessage] = useState<string>("")
+  const [currentChoice, setCurrentChoice] = useState(0);
+
 
   const handleEnterIntoMetaverse =()=>{
    if(userName && userName.length < 10){
@@ -26,7 +28,7 @@ const App = () => {
       <div className="flex flex-col justify-center items-center w-5/6">
         <MetaChat3D />
         <h3 className="text-white font-light text-sm font-mono ">Connect with anyone, anytime</h3>
-        <ColorSelectionWindowj />
+        <ColorSelectionWindowj  currentChoice={currentChoice} setCurrentChoice={setCurrentChoice}/>
         <div className="flex justify-center mt-5 items-center">
           <input  onChange={(e)=>updateUserName(e.target.value)} type="text" name="" id=""  className="rounded-md h-10 font-mono border border-black" placeholder="Enter your name.."/><button className="font-mono text-white md:text-5xl text-4xl font-extrabold ms-5 -rotate-6" 
           onClick={handleEnterIntoMetaverse}>Go!</button>
@@ -37,7 +39,7 @@ const App = () => {
         </div>
     </div>:
     <div>
-      <SocketContextWrapper userName={userName}>
+      <SocketContextWrapper userName={userName} colorCode={currentChoice}> 
       <PlayGround />
       </SocketContextWrapper>
     </div>

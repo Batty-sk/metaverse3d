@@ -3,11 +3,14 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import React, { useRef, useState } from 'react';
 import { animated, useSpring } from '@react-spring/three';
 import { Vector3 } from 'three';
+type ColorSelectionProps ={
+    currentChoice:number,
+    setCurrentChoice:React.Dispatch<React.SetStateAction<number>>,
+}
 
-const ColorSelectionWindowj = () => {
+const ColorSelectionWindowj = ({currentChoice,setCurrentChoice}:ColorSelectionProps) => {
     const cameraRef = useRef<any>();
-    const [currentChoice, setCurrentChoice] = useState(0);
-    const colors = ['red', 'brown', 'green'];
+    const colors = ['yellow', 'brown', 'green'];
     const positions = [
         [0, 0, 4], 
         [0, 0, 0],  
