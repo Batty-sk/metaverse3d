@@ -36,10 +36,19 @@ const GlowingStar = () => {
         <meshStandardMaterial color="yellow" emissive="yellow" emissiveIntensity={2} />
       </mesh>
 
-      <Text position={[-5-2.5, 2, -2]}  rotation={[0,Math.PI/2,0]} fontSize={0.3} color="white" anchorX="center" anchorY="middle">
-      Star It on GitHub ⭐
-            </Text>
-      <Text position={[-5-2.5, 1.7, -2]}   rotation={[0,Math.PI/2,0]} fontSize={0.1} color="white" anchorX="center" anchorY="middle">
+      <Text
+       position={[-5-2.5, 2, -2]} 
+        rotation={[0,Math.PI/2,0]} 
+        fontSize={0.2} 
+        color="#1a4465"
+        font='/fonts/Rockybilly.ttf'
+      >
+        Star It On Github
+        <meshStandardMaterial emissive="yellow" emissiveIntensity={10} />
+      </Text>
+
+      <Text position={[-5-2.5, 1.7, -2]}   rotation={[0,Math.PI/2,0]}
+       fontSize={0.1} color="white" anchorX="center" anchorY="middle">
        Click here
       </Text>
     </group>

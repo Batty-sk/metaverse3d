@@ -78,7 +78,7 @@ const UserArea = ({ handleMessageSend,chats,peerId }: UserAreaProp) => {
           name="input"
           id=""
           placeholder="Enter your message.."
-          className="rounded-md outline outline-1 outline-amber-800 md:p-3 p-1"
+          className="rounded-md outline outline-1 outline-amber-800 md:p-3 p-1 w-5/6 "
           value={message}
           onChange={(e) => {
             updateMessage(e.target.value);
