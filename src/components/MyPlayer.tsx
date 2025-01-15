@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
 import { Mesh, TextureLoader, Vector3 } from "three";
-import { playerTexture, woodBaseTexture } from "../assets/textures";
+
 import { useLoader } from "@react-three/fiber";
+import { colorTEXTURES } from "../constants";
 
 type playerProps = {
   playerRef: React.RefObject<Mesh>;
@@ -10,7 +11,7 @@ type playerProps = {
 };
 
 const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
-  const { socket } = useContext(SocketContext);
+  const { socket,color } = useContext(SocketContext);
   const activeKeys = useRef<Set<string>>(new Set());
   const animationFrameId = useRef<number | null>(null);
   const [isJumping, setIsJumping] = useState<boolean>(false);
@@ -20,9 +21,8 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
   const throttleInterval = 100;
   const lastSentTime = useRef<number>(0);
 
-  const [woodTexture] = useLoader(TextureLoader, [woodBaseTexture]);
+  const [playerTexture] = useLoader(TextureLoader, [colorTEXTURES[color]]);
 
-  // Handle Touch Inputs
   const touchStartRef = useRef({ x: 0, y: 0 });
   const touchMoveRef = useRef({ x: 0, y: 0 });
 
@@ -179,7 +179,7 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
   return (
     <mesh position={[0, 0.3, 1]} ref={playerRef} scale={[1, 1, 1]}>
       <sphereGeometry args={[0.2, 32, 32]} />
-      <meshStandardMaterial map={woodTexture} roughness={1} />
+      <meshStandardMaterial map={playerTexture} roughness={1} />
     </mesh>
   );
 };

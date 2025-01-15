@@ -10,7 +10,7 @@ type ColorSelectionProps ={
 
 const ColorSelectionWindowj = ({currentChoice,setCurrentChoice}:ColorSelectionProps) => {
     const cameraRef = useRef<any>();
-    const colors = ['yellow', 'green', 'brown'];
+    const colors = ['brown', 'yellow', 'gray'];
     const positions = [
         [0, 0, 4], 
         [0, 0, 0],  

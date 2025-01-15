@@ -4,4 +4,7 @@ import pavingStoneTexture from "./pavingStoneTexture.jpg"
 import moonTexture from "./moon_texture.jpg"
 import woodenBoardTexture from "./woodenBoardTexture.jpg"
 import playerTexture from "./playerTexture.jpg"
-export {roadBaseTexture,woodBaseTexture,pavingStoneTexture,moonTexture,woodenBoardTexture,playerTexture}
+import chair from "./chair.png"
+import yellow_texture from "./yellow_texture.jpg"
+import gray_texture from "./gray_texture.jpg"
+export {roadBaseTexture,yellow_texture,gray_texture,chair,woodBaseTexture,pavingStoneTexture,moonTexture,woodenBoardTexture,playerTexture}

@@ -31,7 +31,7 @@ type socketContextProps<P, M> = {
   peersState: peersState[];
   fetchCurrentUsersInTheLobby: () => void;
   messages: M[];
-  color:string
+  color: 'yellow' | 'brown' | 'gray';
 };
 
 export const SocketContext = createContext<
@@ -45,7 +45,7 @@ export const SocketContext = createContext<
   messages: [],
   peersState:[],
   fetchCurrentUsersInTheLobby: () => "",
-  color:"",
+  color:"brown",
 });
 
 type socketContextWrapperProps = {
@@ -56,11 +56,11 @@ type socketContextWrapperProps = {
 
 interface peersState{
   peerId:string,
-  color:string
+  color: 'yellow' | 'brown' | 'gray';
   peerName:string
   position:[number,number,number]
 }
-const colors = ['yellow', 'green', 'brown'];
+const colors:('yellow' | 'brown' | 'gray')[]= ['yellow', 'brown', 'gray'];
   
 export const SocketContextWrapper = ({
   children,
@@ -75,7 +75,7 @@ export const SocketContextWrapper = ({
   const [peersState,updatePeersState] = useState<peersState[]>([]) //creating a new state variable which will holds the current players in the lobby.
   const peersMedia = useRef<Map<string, {audio:HTMLAudioElement|null,mutes:boolean}>>(new Map());
   const myPeer = useRef<Peer>();
-  const [color] = useState(colors[colorCode])
+  const [color] = useState<'yellow' | 'brown' | 'gray'>(colors[colorCode])
 
   useEffect(() => {
     
@@ -180,7 +180,7 @@ export const SocketContextWrapper = ({
     });
 
     connection.on("data", (data) => {
-      const position = data as {name:string,color:string, position:[x:number,y:number,z:number]}
+      const position = data as {name:string,color: 'yellow' | 'brown' | 'gray', position:[x:number,y:number,z:number]}
       updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,peerName:position.name,color:position.color, position:position.position}]);
     });
     connection.on("close", () => {
@@ -232,7 +232,7 @@ export const SocketContextWrapper = ({
       });
       connectionToSomeone.on("data", (data) => {
         
-        const playerName = data as {name:string,color:string}
+        const playerName = data as {name:string,color: 'yellow' | 'brown' | 'gray';}
         
         updatePeersState((prevArray) => [...prevArray,{peerId:peerID,peerName:playerName.name,color:playerName.color,position:[0,0.3,0]}]);
 

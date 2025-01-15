@@ -1,16 +1,22 @@
 import React, { useEffect } from "react";
 import { Mesh, MeshStandardMaterial, Vector3 } from "three";
 import { Text } from "@react-three/drei";
+import { colorTEXTURES } from "../constants";
+import { useTexture } from "@react-three/drei";
 
 type PlayersProps = {
   Player_name: string;
-  Player_color: string;
+  Player_color:  'yellow' | 'brown' | 'gray';
   PlayerRef: React.Ref<Mesh>;
   PlayerMaterialMesh:React.Ref<MeshStandardMaterial>
   startingPostition:[number,number,number],
 };
 
 const Players = (args: PlayersProps) => {
+
+  const [playerTexture] = useTexture([
+    colorTEXTURES[args.Player_color]
+  ])
    console.log("real args....",args.startingPostition);
   console.log('args we are getting for the player',args.startingPostition[0],args.startingPostition[1])
   useEffect(()=>{
@@ -28,7 +34,7 @@ const Players = (args: PlayersProps) => {
   {args.Player_name || "User"}
   </Text>
       <sphereGeometry args={[0.2, 32, 32]} />
-      <meshStandardMaterial ref={args.PlayerMaterialMesh} color={args.Player_color} />
+      <meshStandardMaterial ref={args.PlayerMaterialMesh} map={playerTexture}  />
     </mesh>
     </group>
   );

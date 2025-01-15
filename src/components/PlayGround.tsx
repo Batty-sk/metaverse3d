@@ -15,6 +15,8 @@ import YRoad from "./YRoad";
 import { pavingStoneTexture } from "../assets/textures";
 import StreetLamp from "./models/StreetLamp";
 import BushesAndTrees from "./BushesAndTrees";
+import Chair from "./models/Chair";
+import GlowingStar from "./GithubStar";
 
 type canvasSizeProp = {
   width: number;
@@ -213,11 +215,13 @@ const PlayGround = () => {
           rotation={[0, 0, 0]}
         />
         <Club />
+
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
           <planeGeometry args={[15, 25]} />
           <meshStandardMaterial map={paveColorMap} side={2} />
         </mesh>
         <Moon />
+        <GlowingStar />
         <BushesAndTrees />
       </Canvas>
     </div>
