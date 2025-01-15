@@ -1,6 +1,12 @@
 import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import React, { useEffect, useRef, useState } from "react";
-import { Color, Mesh, MeshStandardMaterial, TextureLoader, Vector3 } from "three";
+import {
+  Color,
+  Mesh,
+  MeshStandardMaterial,
+  TextureLoader,
+  Vector3,
+} from "three";
 import { useContext } from "react";
 
 import CustomPerspectiveCamera from "./CustomPerspectiveCamera";
@@ -15,7 +21,6 @@ import YRoad from "./YRoad";
 import { pavingStoneTexture } from "../assets/textures";
 import StreetLamp from "./models/StreetLamp";
 import BushesAndTrees from "./BushesAndTrees";
-import Chair from "./models/Chair";
 import GlowingStar from "./GithubStar";
 
 type canvasSizeProp = {
@@ -36,10 +41,9 @@ const PlayGround = () => {
       progress: number;
     };
   };
-  
-  const playersRef = useRef<Map<string, InterpolatedMesh | null>>(new Map());  //camera ref.
-  const cameraRef = useRef<any>();
 
+  const playersRef = useRef<Map<string, InterpolatedMesh | null>>(new Map()); //camera ref.
+  const cameraRef = useRef<any>();
 
   const playersMaterialRef = useRef<Map<string, MeshStandardMaterial | null>>(
     new Map()
@@ -81,17 +85,16 @@ const PlayGround = () => {
   }, [peersState]);
   useEffect(() => {
     const handleUpdateSize = () => {
-      console.log("updating.. the size")
+      console.log("updating.. the size");
       updateCanvasSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
     };
     window.addEventListener("resize", handleUpdateSize);
-    setTimeout(()=>handleUpdateSize(),100);
+    setTimeout(() => handleUpdateSize(), 100);
     return () => window.removeEventListener("resize", handleUpdateSize);
   }, []);
-
 
   interface coordinates {
     socketId: string;
@@ -103,15 +106,13 @@ const PlayGround = () => {
   const handleSomeOneCoordinates = (args: coordinates) => {
     if (playersRef.current.has(args.socketId)) {
       const playerRef = playersRef.current.get(args.socketId);
-  
-      let Media = null;
-      let Mutes =false;
 
-  
+      let Media = null;
+      let Mutes = false;
+
       Media = playersMedia?.current.get(args.socketId)?.audio;
       Mutes = playersMedia?.current.get(args.socketId)?.mutes || false;
 
-  
       if (playerRef) {
         // Initialize interpolation data if not present
         if (!playerRef.interpolation) {
@@ -125,49 +126,50 @@ const PlayGround = () => {
           playerRef.interpolation.endPosition.set(args.x, args.y, args.z);
           playerRef.interpolation.progress = 0;
         }
-  
+
         const smoothMove = () => {
           if (playerRef && playerRef.interpolation) {
-            playerRef.interpolation.progress += 0.05; 
+            playerRef.interpolation.progress += 0.05;
             if (playerRef.interpolation.progress > 1) {
               playerRef.interpolation.progress = 1;
             }
-  
+
             playerRef.position.lerpVectors(
               playerRef.interpolation.startPosition,
               playerRef.interpolation.endPosition,
               playerRef.interpolation.progress
             );
-  
+
             if (playerRef.interpolation.progress < 1) {
               requestAnimationFrame(smoothMove);
             }
           }
         };
-  
-        smoothMove(); 
-        if(!Media)
-          {
-            console.log("player doesnt associated with any media!")
-            return;
-          }
+
+        smoothMove();
+        if (!Media) {
+          console.log("player doesnt associated with any media!");
+          return;
+        }
         if (
           calculateDistance({
-            userX: playerRef.position.x,
-            userZ: playerRef.position.z,
+            userX: args.x,
+            userZ: args.z,
             currentPlayerX: myPlayerRef.current!.position.x,
             currentPlayerZ: myPlayerRef.current!.position.z,
-          })
-          && !Mutes
+          }) &&
+          !Mutes
         ) {
           console.log("players' media object", Media);
           Media!.muted = false;
-  
+
           Media?.play().catch((err) => {
             console.log("Error playing the remote stream.");
           });
         } else {
           Media!.muted = true;
+          console.log("getting players actual coordinates",args.x,args.z)
+          console.log("enemy player xz: ",playerRef.position.x,playerRef.position.z)
           console.log("Player is too far...");
         }
       }
@@ -177,45 +179,51 @@ const PlayGround = () => {
 
   // this playground would have lot of players in it..
   return (
-    <div style={{ position: "relative", width: canvassize.width, height:canvassize.height }}>
+    <div
+      style={{
+        position: "relative",
+        width: canvassize.width,
+        height: canvassize.height,
+      }}
+    >
       <div style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}>
         <ChatArea />
       </div>
       <Canvas
         className=""
         style={{
-          width:"100%" ,
+          width: "100%",
           height: "100%",
           background: "linear-gradient(180deg, #000000, #0a2a43, #1a4465)", // Deep black to dark blue
         }}
       >
-        <ambientLight intensity={0.5}/>
+        <ambientLight intensity={0.5} />
         <YRoad />
-        <CustomPerspectiveCamera  cameraRef={cameraRef} playerRef={myPlayerRef} />
+        <CustomPerspectiveCamera
+          cameraRef={cameraRef}
+          playerRef={myPlayerRef}
+        />
         {/*       <ambientLight/>
          */}{" "}
         <MyPlayer playerRef={myPlayerRef} cameraRef={cameraRef} />
-        {peersState.map(
-          (args,index) => (
-            <Players
-              key={args.peerId}
-              Player_name={args.peerName}
-              Player_color={args.color}
-              startingPostition={args.position}
-              PlayerRef={(el) => playersRef.current.set(args.peerId, el)}
-              PlayerMaterialMesh={(el) =>
-                playersMaterialRef.current.set(args.peerId, el)
-              }
-            />
-          )
-        )}
+        {peersState.map((args, index) => (
+          <Players
+            key={args.peerId}
+            Player_name={args.peerName}
+            Player_color={args.color}
+            startingPostition={args.position}
+            PlayerRef={(el) => playersRef.current.set(args.peerId, el)}
+            PlayerMaterialMesh={(el) =>
+              playersMaterialRef.current.set(args.peerId, el)
+            }
+          />
+        ))}
         <StreetLamp
           positionLight={[0.5, 3.6, -5]}
           position={[-1.1, -0.1, -5]}
           rotation={[0, 0, 0]}
         />
         <Club />
-
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
           <planeGeometry args={[15, 25]} />
           <meshStandardMaterial map={paveColorMap} side={2} />

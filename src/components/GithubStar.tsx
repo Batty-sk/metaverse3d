@@ -30,6 +30,7 @@ const GlowingStar = () => {
   const starGeometry = new THREE.ShapeGeometry(createHollowStar(radius, points));
 
   return (
+    
     <group onClick={()=>{
         window.open("https://github.com/Batty-sk/metaverse3d/", "_blank");
     }}>

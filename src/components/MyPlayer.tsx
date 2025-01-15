@@ -146,6 +146,7 @@ const MyPlayer = ({ playerRef, cameraRef }: playerProps) => {
         }
 
         const now = Date.now();
+        console.log("my position xz...........",position.x,position.z)
         if (moved && now - lastSentTime.current >= throttleInterval) {
           socket?.emit("send-coordinates", { x: position.x, y: position.y, z: position.z });
           lastSentTime.current = now;
