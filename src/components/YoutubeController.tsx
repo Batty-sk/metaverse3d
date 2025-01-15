@@ -49,10 +49,10 @@ const YoutubeController = () => {
       <mesh ref={meshRef} position={[-5 - 2.4, 1, Math.PI + 2.5]}>
         <Html
           transform
-          occlude
           distanceFactor={1.5}
           rotation={[0, Math.PI / 2, 0]}
-          zIndexRange={[1]}
+          occlude={true}
+
         >
                <div className="h-fit w-[1200px] flex items-center justify-end bg-black">
           <div className="flex items-center">
@@ -84,6 +84,7 @@ const YoutubeController = () => {
               width={"100%"}
               height={"100%"}
               className="border-none"
+            
             />
           </div>
         </Html>

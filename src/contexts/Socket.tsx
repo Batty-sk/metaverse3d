@@ -96,16 +96,17 @@ export const SocketContextWrapper = ({
           myPeer.current = new Peer(socket.id); // Create a Peer with socketId as its unique identifier
           // here we need to send an error to the user if its peerconcetion got rejected .
 
-          myPeer.current.on("error",(error:any)=>{
-              console.log("error  while getting the peerId",error);
-              updateError("We couldn't able to connect you to the Internet!");
-          })
-
+  
           myPeer.current?.addListener("open", (id) => {
             
             socket.emit("registerMe", { peerID: id });
+            console.log("client got the public ip.")
           });
           myPeer.current.addListener("connection", handleConnection);
+          myPeer.current.on("error",(error:any)=>{
+            console.log("error  while getting the peerId",error);
+            updateError("We couldn't able to connect you to the Internet!");
+        })
 
           myPeer.current.on("call", (call) => {
             
@@ -184,6 +185,9 @@ export const SocketContextWrapper = ({
       updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== connection.peer));
     });
 
+    connection.on("error",(error:any)=>{
+      console.log("something went wrong when connecting to the peer!",error);
+    })
     
     
   };
@@ -215,8 +219,10 @@ export const SocketContextWrapper = ({
     
     const connectionToSomeone = myPeer.current?.connect(peerID);
     if (connectionToSomeone) {
+      connectionToSomeone.on("error",(error:any)=>{
+        console.log("couldn't connect with the new joiny! \n reason:",error)
+      })
       connectionToSomeone.on("open", () => {
-        
         peers.current.set(peerID, connectionToSomeone);
         
         connectionToSomeone.send({

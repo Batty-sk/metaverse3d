@@ -56,7 +56,6 @@ const PlayGround = () => {
   //socket use Effect
   useEffect(() => {
     if (socket) {
-      console.log("someone-coordinates getting called....");
       socket.on("someone-coordinates", handleSomeOneCoordinates);
     }
     return () => {
@@ -70,21 +69,18 @@ const PlayGround = () => {
 
     for (const peerId of currentPeers) {
       if (!previousPeers.has(peerId)) {
-        console.log("Adding new player to the lobby...", peerId);
         playersRef.current.set(peerId, null);
       }
     }
 
     for (const peerId of previousPeers) {
       if (!currentPeers.has(peerId)) {
-        console.log("Removing player from the lobby...", peerId);
         playersRef.current.delete(peerId);
       }
     }
   }, [peersState]);
   useEffect(() => {
     const handleUpdateSize = () => {
-      console.log("updating.. the size");
       updateCanvasSize({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -167,14 +163,10 @@ const PlayGround = () => {
           });
         } else {
           Media!.muted = true;
-          console.log("getting players actual coordinates",args.x,args.z)
-          console.log("enemy player xz: ",playerRef.position.x,playerRef.position.z)
-          console.log("Player is too far...");
         }
       }
     }
   };
-  console.log("canvas size ", canvassize);
 
   // this playground would have lot of players in it..
   return (

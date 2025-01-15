@@ -17,9 +17,7 @@ const Players = (args: PlayersProps) => {
   const [playerTexture] = useTexture([
     colorTEXTURES[args.Player_color]
   ])
-   console.log("real args....",args.startingPostition);
   useEffect(()=>{
-    console.log("args.playerRef in the useEffect",args.PlayerRef)
   },[])
   return (
     <group>
