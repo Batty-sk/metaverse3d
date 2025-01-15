@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { chatIcon, globeIcon } from "../assets";
 import { SocketContext } from "../contexts/Socket";
 import { useContext } from "react";

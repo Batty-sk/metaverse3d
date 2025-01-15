@@ -8,21 +8,16 @@ import React, {
 import Peer, { MediaConnection } from "peerjs";
 import { DataConnection } from "peerjs";
 import { io, Socket } from "socket.io-client";
-import { Mesh, Vector3 } from "three";
+import { Mesh } from "three";
 
 type Message = {
   from: string;
   content: string;
 };
 
-type Players = {
-  socketId: string;
-  x: number;
-  y: number;
-  z: number;
-};
 
-type socketContextProps<P, M> = {
+
+type socketContextProps<M> = {
   socket: Socket | null;
   socketId: string;
   noOfPlayers: number;
@@ -35,7 +30,7 @@ type socketContextProps<P, M> = {
 };
 
 export const SocketContext = createContext<
-  socketContextProps<Players, Message>
+  socketContextProps<Message>
 >({
   socket: null,
   socketId: "",
@@ -102,7 +97,7 @@ export const SocketContextWrapper = ({
           // here we need to send an error to the user if its peerconcetion got rejected .
 
           myPeer.current.on("error",(error:any)=>{
-              console.log("error happening while getting the peerId");
+              console.log("error  while getting the peerId",error);
               updateError("We couldn't able to connect you to the Internet!");
           })
 

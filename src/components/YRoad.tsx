@@ -1,4 +1,3 @@
-import React from "react";
 import { roadBaseTexture } from "../assets/textures";
 import { TextureLoader } from "three";
 import { useLoader } from "@react-three/fiber";

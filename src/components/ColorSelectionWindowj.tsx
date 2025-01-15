@@ -1,8 +1,7 @@
 import { PerspectiveCamera } from '@react-three/drei';
-import { Canvas, useFrame } from '@react-three/fiber';
-import React, { useRef, useState } from 'react';
+import { Canvas } from '@react-three/fiber';
+import React, { useRef } from 'react';
 import { animated, useSpring } from '@react-spring/three';
-import { Vector3 } from 'three';
 type ColorSelectionProps ={
     currentChoice:number,
     setCurrentChoice:React.Dispatch<React.SetStateAction<number>>,

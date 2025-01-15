@@ -1,7 +1,6 @@
-import { Canvas, useLoader, useThree } from "@react-three/fiber";
-import React, { useEffect, useRef, useState } from "react";
+import { Canvas, useLoader } from "@react-three/fiber";
+import  { useEffect, useRef, useState } from "react";
 import {
-  Color,
   Mesh,
   MeshStandardMaterial,
   TextureLoader,
@@ -164,7 +163,7 @@ const PlayGround = () => {
           Media!.muted = false;
 
           Media?.play().catch((err) => {
-            console.log("Error playing the remote stream.");
+            console.log("Error playing the remote stream.",err);
           });
         } else {
           Media!.muted = true;
@@ -206,7 +205,7 @@ const PlayGround = () => {
         {/*       <ambientLight/>
          */}{" "}
         <MyPlayer playerRef={myPlayerRef} cameraRef={cameraRef} />
-        {peersState.map((args, index) => (
+        {peersState.map((args) => (
           <Players
             key={args.peerId}
             Player_name={args.peerName}

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Vector3 } from 'three';
 import { useTexture, useGLTF } from '@react-three/drei';
 import { chair } from '../../assets/textures';

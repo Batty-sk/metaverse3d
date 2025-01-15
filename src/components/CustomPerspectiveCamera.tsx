@@ -1,5 +1,5 @@
 import { useThree } from '@react-three/fiber';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 
 const CustomPerspectiveCamera = ({ playerRef, cameraRef }: { playerRef: React.RefObject<any>, cameraRef: React.RefObject<any> }) => {
   const { set } = useThree();
@@ -43,11 +43,11 @@ const CustomPerspectiveCamera = ({ playerRef, cameraRef }: { playerRef: React.Re
       if (cameraRef.current && playerRef.current) {
         const playerPosition = playerRef.current.position;
         cameraRef.current.position.x = playerPosition.x;
-        cameraRef.current.position.z = playerPosition.z + 1; // Adjust distance behind the player
+        cameraRef.current.position.z = playerPosition.z + 1;
       }
     };
 
-    const interval = setInterval(followPlayer, 12); // Follow the player in near-real time (60 FPS)
+    const interval = setInterval(followPlayer, 12); 
 
     return () => clearInterval(interval);
   }, [playerRef]);

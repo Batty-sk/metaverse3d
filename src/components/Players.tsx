@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Mesh, MeshStandardMaterial, Vector3 } from "three";
+import { Mesh, MeshStandardMaterial } from "three";
 import { Text } from "@react-three/drei";
 import { colorTEXTURES } from "../constants";
 import { useTexture } from "@react-three/drei";
@@ -18,7 +18,6 @@ const Players = (args: PlayersProps) => {
     colorTEXTURES[args.Player_color]
   ])
    console.log("real args....",args.startingPostition);
-  console.log('args we are getting for the player',args.startingPostition[0],args.startingPostition[1])
   useEffect(()=>{
     console.log("args.playerRef in the useEffect",args.PlayerRef)
   },[])

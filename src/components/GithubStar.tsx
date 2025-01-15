@@ -1,6 +1,4 @@
-import React from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Text } from "@react-three/drei";
+import {  Text } from "@react-three/drei";
 import * as THREE from "three";
 
 const createHollowStar = (radius: number, points: number): THREE.Shape => {
