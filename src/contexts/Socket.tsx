@@ -74,7 +74,7 @@ export const SocketContextWrapper = ({
 
   useEffect(() => {
     
-    updateSocket(io("http://localhost:8080")); // for the testing purpose...
+    updateSocket(io("https://metaverse3d-backend.onrender.com"));
 
     (async () => {
       try {
