@@ -1,12 +1,11 @@
 // components/BushesAndTrees.tsx
 
 import React from "react";
-import { Canvas } from "@react-three/fiber";
-import { Cloud, OrbitControls, Sparkles } from "@react-three/drei";
+import {  Sparkles } from "@react-three/drei";
 import Chair from "./models/Chair";
 import { Vector3 } from "three";
 
-/** 🌿 Bush Component */
+
 const Bush: React.FC<{ position: [number, number, number] }> = ({
   position,
 }) => {
@@ -18,7 +17,6 @@ const Bush: React.FC<{ position: [number, number, number] }> = ({
   );
 };
 
-/** 🌳 Tree Component */
 const Tree: React.FC<{ position: [number, number, number] }> = ({
   position,
 }) => {

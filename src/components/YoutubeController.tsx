@@ -7,7 +7,7 @@ import { Mesh } from "three";
 const YoutubeController = () => {
   const { socket } = useContext(SocketContext);
   const [videoUrl, updateVideoUrl] = useState<string>(
-    "https://www.youtube.com/embed/htIuSWBnmok?si=JP3abY8bOs6Ki3qW"
+    "https://www.youtube.com/embed/dQw4w9WgXcQ?si=DR3zQnZoOtPIb_tX"
   );
   const [rawVideoUrl, updateRawVideoUrl] = useState<string>("");
   const meshRef = useRef<Mesh>(null);
@@ -17,7 +17,7 @@ const YoutubeController = () => {
     return () => {
       socket?.off("video-url", handleVideoUrl);
     };
-  });
+  },[]);
 
   const handleVideoUrl = (videUrl:string) => {
     updateVideoUrl(videUrl);
@@ -45,17 +45,16 @@ const YoutubeController = () => {
 
   return (
     <>
-      <Html
-        position={[-5, 1, Math.PI + 0.01]}
-        transform
-        distanceFactor={1.5}
-        zIndexRange={[0]}
-        occlude
-      >
-        <div className="h-[530px] w-[1200px] flex flex-col items-center justify-center bg-black">
-          <h1 className="text-white font-mono font-extrabold text-5xl">
-            Youtube Link
-          </h1>
+
+      <mesh ref={meshRef} position={[-5 - 2.4, 1, Math.PI + 2.5]}>
+        <Html
+          transform
+          occlude
+          distanceFactor={1.5}
+          rotation={[0, Math.PI / 2, 0]}
+          zIndexRange={[1]}
+        >
+               <div className="h-fit w-[1200px] flex items-center justify-end bg-black">
           <div className="flex items-center">
             <div className="flex justify-center items-center">
               <input
@@ -79,15 +78,6 @@ const YoutubeController = () => {
           </div>
           {error && <h5 className="text-red-600 font-mono mt-2 ">{error}</h5>}
         </div>
-      </Html>
-      <mesh ref={meshRef} position={[-5 - 2.4, 1, Math.PI + 2.5]}>
-        <Html
-          transform
-          occlude
-          distanceFactor={1.5}
-          rotation={[0, Math.PI / 2, 0]}
-          zIndexRange={[1]}
-        >
           <div className="h-[520px] w-[1200px] bg-black">
             <iframe
               src={videoUrl}

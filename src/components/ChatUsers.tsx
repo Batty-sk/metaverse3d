@@ -72,19 +72,19 @@ const UserArea = ({ handleMessageSend,chats,peerId }: UserAreaProp) => {
           </div>
         }})}
       </div>
-      <div className="flex justify-center items-center">
+      <div className="flex flex-wrap justify-center items-center">
         <input
           type="text"
           name="input"
           id=""
           placeholder="Enter your message.."
-          className="rounded-md outline outline-1 outline-amber-800 p-3"
+          className="rounded-md outline outline-1 outline-amber-800 md:p-3 p-1"
           value={message}
           onChange={(e) => {
             updateMessage(e.target.value);
           }}
         />
-        <span className="ms-3 cursor-pointer" onClick={()=>handleMessageSend(message,peerId)}>
+        <span className="md:ms-3 mx-1 cursor-pointer" onClick={()=>handleMessageSend(message,peerId)}>
           {" "}
           <img src={send} alt="" />
         </span>
@@ -143,7 +143,7 @@ useEffect(()=>{
   };
 
   return (
-    <div className="relative overflow-x-hidden h-full overflow-y-hidden">
+    <div className="relative overflow-x-hidden md:min-h-96 min-h-80">
       <div className="h-full overflow-y-auto overflow-x-hidden">
         {!peersState.length ? (
           <h3 className="font-semibold text-blue-600">No Online Users</h3>
@@ -161,7 +161,7 @@ useEffect(()=>{
         )}
       </div>
       {peerSelected && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#eae2b7]  min-h-80">
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-[#eae2b7]">
           <div className="flex justify-between py-2">
             <h1 className="w-full px-2 ms-2 font-bold ">{peerSelected.peerName}</h1>
             <span

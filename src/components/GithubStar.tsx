@@ -30,12 +30,12 @@ const GlowingStar = () => {
   const starGeometry = new THREE.ShapeGeometry(createHollowStar(radius, points));
 
   return (
-    
+
     <group onClick={()=>{
         window.open("https://github.com/Batty-sk/metaverse3d/", "_blank");
     }}>
       <mesh geometry={starGeometry} position={[-5-2.5, 2, 0]} rotation={[0,Math.PI/2,0]}>
-        <meshStandardMaterial color="yellow" emissive="yellow" emissiveIntensity={1} />
+        <meshStandardMaterial color="yellow" emissive="yellow" emissiveIntensity={2} />
       </mesh>
 
       <Text position={[-5-2.5, 2, -2]}  rotation={[0,Math.PI/2,0]} fontSize={0.3} color="white" anchorX="center" anchorY="middle">
