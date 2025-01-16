@@ -10,7 +10,6 @@ const YoutubeController = () => {
     "https://www.youtube.com/embed/dQw4w9WgXcQ?si=DR3zQnZoOtPIb_tX"
   );
   const [rawVideoUrl, updateRawVideoUrl] = useState<string>("");
-  const meshRef = useRef<Mesh>(null);
   const [error, updateError] = useState<string>("");
   useEffect(() => {
     socket?.on("video-url", handleVideoUrl);
