@@ -134,13 +134,17 @@ export const SocketContextWrapper = ({
             }
           });
         }
+        console.log("socket listeneres....")
         socket.on("someone-leaves", handleSomeOneLeaves);
         socket.on("someone-joins", handleSomeoneJoins);
         socket?.on("messageRequest", handleMessageRequest);
       });
 
+
     }
     return () => {
+      console.log("turning off the listneres");
+      socket?.off("connect");
       socket?.off("messageRequest", handleMessageRequest);
       socket?.off("someone-leaves", handleSomeOneLeaves);
       socket?.off("someone-joins", handleSomeoneJoins);
@@ -176,6 +180,7 @@ export const SocketContextWrapper = ({
     
     // when the new socket/player joins then we have to get all the player's coordinates who are
     // available in the lobby.
+    console.log("im the new player and reciving the connection reequest!")
     connection.on("open", () => {
       peers.current.set(connection.peer, connection);
       connection.send({name:userName,color:colors[colorCode]})
@@ -225,11 +230,11 @@ export const SocketContextWrapper = ({
   const handleSomeoneJoins = (peerID: string) => {
     
     const connectionToSomeone = myPeer.current?.connect(peerID);
-    if (connectionToSomeone) {
-      connectionToSomeone.on("error",(error:any)=>{
+    console.log("someone joins with the socket id:",peerID);
+      connectionToSomeone?.on("error",(error:any)=>{
         console.log("couldn't connect with the new joiny! \n reason:",error)
       })
-      connectionToSomeone.on("open", () => {
+      connectionToSomeone?.on("open", () => {
         peers.current.set(peerID, connectionToSomeone);
         
         connectionToSomeone.send({
@@ -238,14 +243,14 @@ export const SocketContextWrapper = ({
           position:
           myPlayerRef.current?[...myPlayerRef.current.position]:[0,0.3,0]});
       });
-      connectionToSomeone.on("data", (data) => {
+      connectionToSomeone?.on("data", (data) => {
         
         const playerName = data as {name:string,color: 'yellow' | 'brown' | 'gray';}
         
         updatePeersState((prevArray) => [...prevArray,{peerId:peerID,peerName:playerName.name,color:playerName.color,position:[0,0.3,0]}]);
 
       });
-      connectionToSomeone.on("close", () => {
+      connectionToSomeone?.on("close", () => {
         
         connectionToSomeone.off("open");
         peers.current.delete(peerID)
@@ -269,7 +274,7 @@ export const SocketContextWrapper = ({
         });
 
       }
-    }
+    
   };
   const handleMessageRequest = () => {};
   return (
