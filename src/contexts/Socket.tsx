@@ -236,7 +236,7 @@ export const SocketContextWrapper = ({
       })
       connectionToSomeone?.on("open", () => {
         peers.current.set(peerID, connectionToSomeone);
-        
+        console.log("the person has opened the connection putting into the world!")
         connectionToSomeone.send({
           color:colors[colorCode],
           name :userName,
@@ -244,15 +244,17 @@ export const SocketContextWrapper = ({
           myPlayerRef.current?[...myPlayerRef.current.position]:[0,0.3,0]});
       });
       connectionToSomeone?.on("data", (data) => {
-        
+        console.log("the person has sent its coordinates!")
         const playerName = data as {name:string,color: 'yellow' | 'brown' | 'gray';}
         
         updatePeersState((prevArray) => [...prevArray,{peerId:peerID,peerName:playerName.name,color:playerName.color,position:[0,0.3,0]}]);
 
       });
       connectionToSomeone?.on("close", () => {
-        
+        console.log("the person hhas been Disconnected")
+
         connectionToSomeone.off("open");
+        connectionToSomeone.off("data");
         peers.current.delete(peerID)
         updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== peerID));
       });
@@ -274,7 +276,7 @@ export const SocketContextWrapper = ({
         });
 
       }
-    
+    console.log("handle someone joins executed without any errors!");
   };
   const handleMessageRequest = () => {};
   return (
