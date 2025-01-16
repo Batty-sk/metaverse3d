@@ -1,8 +1,7 @@
 import { Html } from "@react-three/drei";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useContext } from "react";
 import { SocketContext } from "../contexts/Socket";
-import { Mesh } from "three";
 
 const YoutubeController = () => {
   const { socket } = useContext(SocketContext);

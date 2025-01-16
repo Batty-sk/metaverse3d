@@ -22,13 +22,11 @@ const Tree: React.FC<{ position: [number, number, number] }> = ({
 }) => {
   return (
     <group position={position}>
-      {/* Trunk */}
       <mesh position={[0, 0.75, 0]}>
         <cylinderGeometry args={[0.1, 0.1, 1.5, 8]} />
         <meshStandardMaterial color="sienna" />
       </mesh>
 
-      {/* Leaves */}
       <mesh position={[0, 1.5, 0]}>
         <sphereGeometry args={[0.6, 16, 16]} />
         <meshStandardMaterial color="green" />
