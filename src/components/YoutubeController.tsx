@@ -46,12 +46,13 @@ const YoutubeController = () => {
   return (
     <>
 
-      <mesh ref={meshRef} position={[-5 - 2.4, 1, Math.PI + 2.5]}>
         <Html
           transform
           distanceFactor={1.5}
           rotation={[0, Math.PI / 2, 0]}
-          occlude={true}
+          position={[-5 - 2.4, 1, Math.PI + 2.5]}
+          occlude="blending" 
+            style={{ willChange: "transform, opacity" }}  // Add this
 
         >
                <div className="h-fit w-[1200px] flex items-center justify-end bg-black">
@@ -61,7 +62,7 @@ const YoutubeController = () => {
                 type="text"
                 name="youtube-link"
                 id="youtube-link"
-                className=" font-mono h-12 w-64"
+                className=" font-mono h-11 w-64"
                 placeholder="Youtube link"
                 value={rawVideoUrl}
                 onChange={(e) => {
@@ -88,7 +89,6 @@ const YoutubeController = () => {
             />
           </div>
         </Html>
-      </mesh>
     </>
   );
 };

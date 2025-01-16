@@ -93,7 +93,13 @@ export const SocketContextWrapper = ({
       socket.on("connect", () => {
         
         if (socket.id) {
-          myPeer.current = new Peer(socket.id); // Create a Peer with socketId as its unique identifier
+          myPeer.current = new Peer(socket.id, {
+            config: {
+              iceServers: [
+                { urls: "stun:stun.l.google.com:19302" }, // STUN server only
+              ],
+            },
+          }); // Create a Peer with socketId as its unique identifier
           // here we need to send an error to the user if its peerconcetion got rejected .
 
   
@@ -103,6 +109,7 @@ export const SocketContextWrapper = ({
             console.log("client got the public ip.")
           });
           myPeer.current.addListener("connection", handleConnection);
+   
           myPeer.current.on("error",(error:any)=>{
             console.log("error  while getting the peerId",error);
             updateError("We couldn't able to connect you to the Internet!");
