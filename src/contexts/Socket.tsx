@@ -181,26 +181,36 @@ export const SocketContextWrapper = ({
     // when the new socket/player joins then we have to get all the player's coordinates who are
     // available in the lobby.
     console.log("im the new player and reciving the connection reequest!")
-    connection.on("open", () => {
-      peers.current.set(connection.peer, connection);
-      connection.send({name:userName,color:colors[colorCode]})
 
-    });
+    const retryConnection = (connection: DataConnection, retries = 3) => {
+      let attempts = 0;
+      connection.on("open", () => {
+        peers.current.set(connection.peer, connection);
+        connection.send({name:userName,color:colors[colorCode]})
+  
+      });
+  
+      connection.on("data", (data) => {
+        const position = data as {name:string,color: 'yellow' | 'brown' | 'gray', position:[x:number,y:number,z:number]}
+        updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,peerName:position.name,color:position.color, position:position.position}]);
+      });
+      connection.on("close", () => {
+        
+        peers.current.delete(connection.peer)
+        updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== connection.peer));
+      });  
 
-    connection.on("data", (data) => {
-      const position = data as {name:string,color: 'yellow' | 'brown' | 'gray', position:[x:number,y:number,z:number]}
-      updatePeersState((prevArray) => [...prevArray, {peerId:connection.peer,peerName:position.name,color:position.color, position:position.position}]);
-    });
-    connection.on("close", () => {
-      
-      peers.current.delete(connection.peer)
-      updatePeersState((prevArray) => prevArray.filter((item) => item.peerId !== connection.peer));
-    });
-
-    connection.on("error",(error:any)=>{
-      console.log("something went wrong when connecting to the peer!",error);
-    })
+      connection.on("error", (error) => {
+        if (attempts < retries) {
+          attempts++;
+          setTimeout(() => retryConnection(connection, retries), 1000);
+        } else {
+          console.log("Failed to connect after multiple attempts", error);
+        }
+      });
+    };
     
+    retryConnection(connection);
     
   };
 
@@ -231,6 +241,7 @@ export const SocketContextWrapper = ({
     
     const connectionToSomeone = myPeer.current?.connect(peerID);
     console.log("someone joins with the socket id:",peerID);
+    
       connectionToSomeone?.on("error",(error:any)=>{
         console.log("couldn't connect with the new joiny! \n reason:",error)
       })
